@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bymoment Booth — Kasir POS</title>
+  <meta name="description" content="Sistem Kasir Point of Sale untuk Bymoment Booth — photobox modern." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { jakarta: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: {
+            brand: {
+              pink: '#FF3CAC',
+              purple: '#784BA0',
+              blue: '#2B86C5',
+              cyan: '#00D4FF',
+              violet: '#a855f7',
+              fuchsia: '#e879f9',
+              rose: '#fb7185',
+            }
+          },
+          animation: {
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'slide-up': 'slideUp .4s cubic-bezier(.16,1,.3,1)',
+            'slide-in-right': 'slideInRight .35s cubic-bezier(.16,1,.3,1)',
+            'bounce-in': 'bounceIn .5s cubic-bezier(.36,.07,.19,.97)',
+          },
+          keyframes: {
+            float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
+            pulseGlow: { '0%,100%': { boxShadow: '0 0 20px rgba(255,60,172,.4)' }, '50%': { boxShadow: '0 0 40px rgba(255,60,172,.8)' } },
+            slideUp: { from: { opacity: 0, transform: 'translateY(24px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+            slideInRight: { from: { opacity: 0, transform: 'translateX(24px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+            bounceIn: { '0%': { transform: 'scale(.3)', opacity: 0 }, '50%': { transform: 'scale(1.05)' }, '70%': { transform: 'scale(.9)' }, '100%': { transform: 'scale(1)', opacity: 1 } },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0614;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, .05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(#FF3CAC, #784BA0);
+      border-radius: 10px;
+    }
+
+    .grad-text {
+      background: linear-gradient(135deg, #FF3CAC 0%, #a855f7 50%, #00D4FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, .04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 20px;
+    }
+
+    .grad-border {
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      position: relative;
+    }
+
+    .grad-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, #FF3CAC, #784BA0, #00D4FF);
+      z-index: -1;
+    }
+
+    .btn-neon {
+      background: linear-gradient(135deg, #FF3CAC, #784BA0);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      transition: transform .15s, box-shadow .15s, filter .15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-neon::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .2), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .btn-neon:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 60, 172, .5);
+      filter: brightness(1.1);
+    }
+
+    .btn-neon:hover::after {
+      opacity: 1;
+    }
+
+    .btn-neon:active {
+      transform: translateY(0);
+    }
+
+    .btn-cyan {
+      background: linear-gradient(135deg, #00D4FF, #2B86C5);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .btn-cyan:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, .5);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .btn-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, .5);
+    }
+
+    .btn-green:active {
+      transform: translateY(0);
+    }
+
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      border: none;
+      outline: none;
+    }
+
+    .qty-btn:active {
+      transform: scale(.9);
+    }
+
+    .qty-minus {
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+    }
+
+    .qty-minus:hover {
+      background: rgba(255, 60, 172, .3);
+    }
+
+    .qty-plus {
+      background: linear-gradient(135deg, #FF3CAC, #784BA0);
+      color: #fff;
+    }
+
+    .qty-plus:hover {
+      box-shadow: 0 4px 15px rgba(255, 60, 172, .5);
+    }
+
+    .queue-card {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 16px;
+      transition: border-color .3s, background .3s, transform .2s;
+      animation: slideInRight .35s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .queue-card:hover {
+      transform: translateX(3px);
+      border-color: rgba(255, 60, 172, .4);
+    }
+
+    .queue-card.active {
+      border-color: #FF3CAC;
+      background: rgba(255, 60, 172, .08);
+    }
+
+    .queue-card.done {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, .08);
+    }
+
+    .timer-display {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FF3CAC, #00D4FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .queue-card.done .timer-display {
+      background: linear-gradient(135deg, #10b981, #059669);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #login-page {
+      background: radial-gradient(ellipse at 20% 20%, rgba(255, 60, 172, .25) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(0, 212, 255, .2) 0%, transparent 60%), radial-gradient(ellipse at 50% 50%, rgba(120, 75, 160, .15) 0%, transparent 70%), #0a0614;
+    }
+
+    .dash-header {
+      background: linear-gradient(135deg, rgba(255, 60, 172, .15), rgba(120, 75, 160, .1), rgba(0, 212, 255, .1));
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 6, 20, .85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pos-input {
+      background: rgba(255, 255, 255, .06);
+      border: 1.5px solid rgba(255, 255, 255, .12);
+      color: #fff;
+      border-radius: 12px;
+      transition: border-color .2s, background .2s;
+      outline: none;
+    }
+
+    .pos-input:focus {
+      border-color: #FF3CAC;
+      background: rgba(255, 60, 172, .06);
+      box-shadow: 0 0 0 3px rgba(255, 60, 172, .15);
+    }
+
+    .pos-input::placeholder {
+      color: rgba(255, 255, 255, .3);
+    }
+
+    .badge-pink {
+      background: rgba(255, 60, 172, .2);
+      color: #FF3CAC;
+      border: 1px solid rgba(255, 60, 172, .3);
+    }
+
+    .badge-cyan {
+      background: rgba(0, 212, 255, .15);
+      color: #00D4FF;
+      border: 1px solid rgba(0, 212, 255, .3);
+    }
+
+    .badge-green {
+      background: rgba(16, 185, 129, .15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, .3);
+    }
+
+    .badge-yellow {
+      background: rgba(251, 191, 36, .15);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, .3);
+    }
+
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 99999;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 600;
+      color: #fff;
+      font-size: .9rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+      animation: slideInRight .35s cubic-bezier(.16, 1, .3, 1);
+      max-width: 320px;
+    }
+
+    .toast-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .toast-error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .toast-info {
+      background: linear-gradient(135deg, #FF3CAC, #784BA0);
+    }
+
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ripple::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(255, 255, 255, .15);
+      opacity: 0;
+      transform: scale(0);
+      transition: transform .4s, opacity .4s;
+    }
+
+    .ripple:active::after {
+      transform: scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes alarmRing {
+
+      0%,
+      100% {
+        transform: rotate(-10deg)
+      }
+
+      25% {
+        transform: rotate(10deg)
+      }
+
+      50% {
+        transform: rotate(-8deg)
+      }
+
+      75% {
+        transform: rotate(8deg)
+      }
+    }
+
+    .alarm-ring {
+      animation: alarmRing .15s ease-in-out 6;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(24px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(.3);
+        opacity: 0
+      }
+
+      50% {
+        transform: scale(1.05)
+      }
+
+      70% {
+        transform: scale(.9)
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-8px)
+      }
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 60, 172, .4)
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(255, 60, 172, .8)
+      }
+    }
+
+    .animate-slide-up {
+      animation: slideUp .4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-pulse-glow {
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    .animate-bounce-in {
+      animation: bounceIn .5s cubic-bezier(.36, .07, .19, .97);
+    }
+  </style>
+</head>
+
+<body class="text-white min-h-screen overflow-x-hidden">
+
+  <!-- LOGIN PAGE -->
+  <div id="login-page" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="orb w-72 h-72 top-[-80px] left-[-60px]" style="background:rgba(255,60,172,.35)"></div>
+    <div class="orb w-96 h-96 bottom-[-100px] right-[-80px]" style="background:rgba(0,212,255,.25)"></div>
+    <div class="orb w-48 h-48 top-[40%] left-[10%]" style="background:rgba(120,75,160,.3)"></div>
+    <div class="absolute top-20 right-24 w-3 h-3 rounded-full bg-pink-400 opacity-60 animate-float"
+      style="animation-delay:.5s"></div>
+    <div class="absolute top-40 left-32 w-2 h-2 rounded-full bg-cyan-400 opacity-50 animate-float"
+      style="animation-delay:1s"></div>
+    <div class="absolute bottom-32 left-1/4 w-4 h-4 rounded-full bg-purple-400 opacity-40 animate-float"
+      style="animation-delay:1.5s"></div>
+
+    <div class="relative z-10 w-full max-w-md px-6 animate-slide-up">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 animate-pulse-glow"
+          style="background:linear-gradient(135deg,#FF3CAC,#784BA0,#00D4FF)">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <h1 class="text-4xl font-black grad-text leading-tight">Bymoment Booth</h1>
+        <p class="text-white/50 mt-2 text-sm font-medium tracking-widest uppercase">Point of Sale System</p>
+      </div>
+
+      <div class="glass grad-border rounded-2xl p-8 relative" style="border-radius:20px">
+        <h2 class="text-xl font-bold text-white/90 mb-6 text-center">👋 Selamat Datang Kembali!</h2>
+        <div id="login-error" class="hidden mb-4 px-4 py-3 rounded-xl text-sm font-semibold"
+          style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#fca5a5">
+          ❌ Username atau password salah.
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-white/50 uppercase tracking-widest mb-2">Username</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+              <input id="login-username" type="text" placeholder="Masukkan username"
+                class="pos-input w-full pl-11 pr-4 py-3.5 text-sm font-medium" autocomplete="username" required />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-white/50 uppercase tracking-widest mb-2">Password</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+              <input id="login-password" type="password" placeholder="Masukkan password"
+                class="pos-input w-full pl-11 pr-12 py-3.5 text-sm font-medium" autocomplete="current-password"
+                required />
+              <button type="button" id="toggle-pw"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button id="login-btn" type="submit"
+            class="btn-neon ripple w-full py-4 rounded-xl text-base font-bold mt-2 flex items-center justify-center gap-2">
+            <span id="login-btn-text">✨ Masuk ke Dashboard</span>
+            <div id="login-spinner" class="spinner hidden"></div>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-5 border-t border-white/[.07] text-center">
+          <p class="text-xs text-white/30">💡 Demo: username <span class="text-pink-400 font-semibold">admin</span> /
+            password <span class="text-pink-400 font-semibold">bymoment123</span></p>
+        </div>
+      </div>
+      <p class="text-center text-white/20 text-xs mt-6 font-medium">© 2025 Bymoment Booth • All rights reserved</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard-page" class="hidden min-h-screen flex flex-col" style="background:#0a0614">
+    <div class="fixed inset-0 pointer-events-none" style="z-index:0">
+      <div class="orb w-[500px] h-[500px] top-[-150px] left-[-100px]" style="background:rgba(255,60,172,.12)"></div>
+      <div class="orb w-[400px] h-[400px] bottom-[-100px] right-[-80px]" style="background:rgba(0,212,255,.1)"></div>
+      <div class="orb w-[300px] h-[300px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style="background:rgba(120,75,160,.08)"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="dash-header relative z-10 px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+          style="background:linear-gradient(135deg,#FF3CAC,#784BA0)">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-black text-lg grad-text leading-none">Bymoment Booth</h1>
+          <p class="text-white/40 text-xs font-medium">Kasir POS System</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex flex-col items-end">
+          <span id="header-time" class="text-white font-bold text-sm tabular-nums"></span>
+          <span id="header-date" class="text-white/40 text-xs font-medium"></span>
+        </div>
+        <div class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl badge-pink text-sm font-bold">
+          <span>💰</span><span id="header-revenue">Rp 0</span>
+        </div>
+        <button id="logout-btn"
+          class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white/70 hover:text-white border border-white/10 hover:border-white/30 transition-all hover:bg-white/[.05]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span id="header-user" class="hidden sm:inline">Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="flex-1 relative z-10 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6"
+      style="align-items:start">
+
+      <!-- LEFT: ORDER INPUT -->
+      <section class="lg:col-span-1 xl:col-span-2 space-y-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-lg">🛒</span>
+          <h2 class="font-bold text-white/80 text-base">Input Pesanan</h2>
+        </div>
+
+        <!-- Sesi card -->
+        <div class="glass rounded-2xl p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
+            style="background:linear-gradient(135deg,#FF3CAC,#784BA0);transform:translate(30%,-30%)"></div>
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+                    style="background:linear-gradient(135deg,#FF3CAC,#784BA0)">📸</div>
+                  <span class="font-bold text-white text-base">Sesi Foto</span>
+                </div>
+                <p class="text-white/40 text-xs font-medium pl-10">1 sesi = 10 menit</p>
+              </div>
+              <div class="text-right">
+                <span class="text-pink-400 font-black text-lg">Rp 25.000</span>
+                <p class="text-white/30 text-xs">/ sesi</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+              <button class="qty-btn qty-minus ripple" onclick="changeQty('sesi', -1)" id="sesi-minus">−</button>
+              <div class="text-center flex-1">
+                <span id="sesi-qty" class="text-3xl font-black text-white tabular-nums">1</span>
+                <p class="text-white/30 text-xs mt-0.5">sesi</p>
+              </div>
+              <button class="qty-btn qty-plus ripple" onclick="changeQty('sesi', 1)" id="sesi-plus">+</button>
+            </div>
+            <div class="mt-3 flex justify-between items-center">
+              <span class="text-white/40 text-xs font-medium">Subtotal:</span>
+              <span id="sesi-subtotal" class="text-white font-bold text-sm">Rp 25.000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extra Print card -->
+        <div class="glass rounded-2xl p-5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
+            style="background:linear-gradient(135deg,#00D4FF,#2B86C5);transform:translate(30%,-30%)"></div>
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+                    style="background:linear-gradient(135deg,#00D4FF,#2B86C5)">🖨️</div>
+                  <span class="font-bold text-white text-base">Extra Print</span>
+                </div>
+                <p class="text-white/40 text-xs font-medium pl-10">Cetak foto tambahan</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-lg" style="color:#00D4FF">Rp 10.000</span>
+                <p class="text-white/30 text-xs">/ lembar</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-black/30 rounded-xl p-3">
+              <button class="qty-btn qty-minus ripple" onclick="changeQty('print', -1)" id="print-minus">−</button>
+              <div class="text-center flex-1">
+                <span id="print-qty" class="text-3xl font-black text-white tabular-nums">0</span>
+                <p class="text-white/30 text-xs mt-0.5">lembar</p>
+              </div>
+              <button class="qty-btn qty-plus ripple" onclick="changeQty('print', 1)" id="print-plus">+</button>
+            </div>
+            <div class="mt-3 flex justify-between items-center">
+              <span class="text-white/40 text-xs font-medium">Subtotal:</span>
+              <span id="print-subtotal" class="text-white font-bold text-sm">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick presets -->
+        <div>
+          <p class="text-white/30 text-xs font-semibold uppercase tracking-widest mb-2">⚡ Menu Cepat</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setPreset(1,0)"
+              class="ripple px-3 py-3 rounded-xl text-xs font-bold text-center transition-all border border-white/10 hover:border-pink-500/50 hover:bg-white/[.05]">
+              📸 1 Sesi<br><span class="text-pink-400">Rp 25.000</span>
+            </button>
+            <button onclick="setPreset(2,0)"
+              class="ripple px-3 py-3 rounded-xl text-xs font-bold text-center transition-all border border-white/10 hover:border-pink-500/50 hover:bg-white/[.05]">
+              📸 2 Sesi<br><span class="text-pink-400">Rp 50.000</span>
+            </button>
+            <button onclick="setPreset(1,1)"
+              class="ripple px-3 py-3 rounded-xl text-xs font-bold text-center transition-all border border-white/10 hover:border-cyan-400/50 hover:bg-white/[.05]">
+              📸+🖨️ 1+1<br><span class="text-cyan-400">Rp 35.000</span>
+            </button>
+            <button onclick="setPreset(2,2)"
+              class="ripple px-3 py-3 rounded-xl text-xs font-bold text-center transition-all border border-white/10 hover:border-violet-400/50 hover:bg-white/[.05]">
+              📸+🖨️ 2+2<br><span class="text-violet-400">Rp 70.000</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs font-semibold text-white/30 uppercase tracking-widest mb-2">📝 Catatan
+            (Opsional)</label>
+          <textarea id="order-note" rows="2" placeholder="Misal: booth pink, nama pelanggan..."
+            class="pos-input w-full px-4 py-3 text-sm font-medium resize-none"></textarea>
+        </div>
+      </section>
+
+      <!-- RIGHT: CART + QUEUE -->
+      <div class="lg:col-span-1 xl:col-span-3 space-y-4">
+
+        <!-- Cart -->
+        <section>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-lg">💳</span>
+            <h2 class="font-bold text-white/80 text-base">Keranjang &amp; Pembayaran</h2>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="space-y-3 mb-4">
+              <div class="flex justify-between items-center py-2.5 border-b border-white/[.07]">
+                <div class="flex items-center gap-3">
+                  <span class="text-xl">📸</span>
+                  <div>
+                    <p class="font-semibold text-white/90 text-sm">Sesi Foto</p>
+                    <p id="cart-sesi-desc" class="text-white/40 text-xs">1x @ Rp 25.000</p>
+                  </div>
+                </div>
+                <span id="cart-sesi-amount" class="font-bold text-white text-sm">Rp 25.000</span>
+              </div>
+              <div class="flex justify-between items-center py-2.5 border-b border-white/[.07]">
+                <div class="flex items-center gap-3">
+                  <span class="text-xl">🖨️</span>
+                  <div>
+                    <p class="font-semibold text-white/90 text-sm">Extra Print</p>
+                    <p id="cart-print-desc" class="text-white/40 text-xs">0x @ Rp 10.000</p>
+                  </div>
+                </div>
+                <span id="cart-print-amount" class="font-bold text-white text-sm">Rp 0</span>
+              </div>
+              <div class="flex justify-between items-center py-2 bg-white/[.03] rounded-xl px-3">
+                <div class="flex items-center gap-2 text-white/50 text-xs font-medium"><span>⏱️</span> Estimasi Durasi
+                </div>
+                <span id="cart-duration" class="text-cyan-400 font-bold text-sm tabular-nums">10 menit</span>
+              </div>
+            </div>
+
+            <div class="rounded-xl p-4 mb-5"
+              style="background:linear-gradient(135deg,rgba(255,60,172,.15),rgba(120,75,160,.15))">
+              <div class="flex justify-between items-center">
+                <span class="text-white/60 font-semibold text-sm">Total Pembayaran</span>
+                <span id="cart-total" class="text-2xl font-black grad-text tabular-nums">Rp 25.000</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button id="pay-cash-btn" onclick="processPayment('Cash')"
+                class="btn-green ripple rounded-xl py-4 text-sm font-black flex flex-col items-center gap-1">
+                <span class="text-2xl">💵</span><span>Bayar Cash</span>
+              </button>
+              <button id="pay-qris-btn" onclick="processPayment('QRIS')"
+                class="btn-neon ripple rounded-xl py-4 text-sm font-black flex flex-col items-center gap-1">
+                <span class="text-2xl">📲</span><span>Bayar QRIS</span>
+              </button>
+            </div>
+
+            <button onclick="resetOrder()"
+              class="w-full mt-3 py-2.5 rounded-xl text-xs font-semibold text-white/30 border border-white/10 hover:border-white/20 hover:text-white/60 transition-all">
+              🔄 Reset Pesanan
+            </button>
+          </div>
+        </section>
+
+        <!-- Queue panel -->
+        <section>
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎫</span>
+              <h2 class="font-bold text-white/80 text-base">Panel Antrean</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="queue-count" class="badge-pink px-3 py-1 rounded-full text-xs font-bold">0 antrean</span>
+              <button onclick="clearDoneQueues()"
+                class="text-xs text-white/30 hover:text-white/60 transition-colors border border-white/10 hover:border-white/20 px-2 py-1 rounded-lg">
+                Hapus Selesai
+              </button>
+            </div>
+          </div>
+          <div id="queue-list" class="space-y-3">
+            <div id="queue-empty" class="glass rounded-2xl p-8 text-center">
+              <div class="text-4xl mb-3 animate-float">📭</div>
+              <p class="text-white/40 font-semibold text-sm">Belum ada antrean</p>
+              <p class="text-white/20 text-xs mt-1">Lakukan pembayaran untuk memulai</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 px-6 py-3 border-t border-white/[.05] flex flex-wrap gap-4 items-center">
+      <div class="flex items-center gap-2 text-xs text-white/30">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span>Sistem Aktif</span>
+      </div>
+      <div class="text-xs text-white/20">Transaksi: <span id="footer-trx-count"
+          class="text-white/40 font-semibold">0</span></div>
+      <div class="text-xs text-white/20">Pendapatan: <span id="footer-revenue" class="text-pink-400 font-semibold">Rp
+          0</span></div>
+      <div class="ml-auto">
+        <a href="#" onclick="showGASConfig();return false;"
+          class="text-xs text-white/20 hover:text-cyan-400 transition-colors">⚙️ Konfigurasi GAS</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- QRIS MODAL -->
+  <div id="qris-modal" class="modal-overlay hidden">
+    <div class="glass rounded-2xl p-6 max-w-xs w-full mx-4 text-center animate-bounce-in">
+      <div class="text-4xl mb-3">📲</div>
+      <h3 class="font-black text-lg mb-1 grad-text">Scan QRIS</h3>
+      <p class="text-white/40 text-xs mb-4 font-medium">Arahkan kamera ke QR code berikut</p>
+      <div class="mx-auto w-44 h-44 rounded-xl p-3 mb-4 bg-white flex items-center justify-center">
+        <svg viewBox="0 0 100 100" class="w-full h-full">
+          <rect x="5" y="5" width="35" height="35" fill="none" stroke="#333" stroke-width="3" />
+          <rect x="12" y="12" width="21" height="21" fill="#333" />
+          <rect x="60" y="5" width="35" height="35" fill="none" stroke="#333" stroke-width="3" />
+          <rect x="67" y="12" width="21" height="21" fill="#333" />
+          <rect x="5" y="60" width="35" height="35" fill="none" stroke="#333" stroke-width="3" />
+          <rect x="12" y="67" width="21" height="21" fill="#333" />
+          <rect x="60" y="60" width="5" height="5" fill="#333" />
+          <rect x="70" y="60" width="5" height="5" fill="#333" />
+          <rect x="80" y="60" width="5" height="5" fill="#333" />
+          <rect x="90" y="60" width="5" height="5" fill="#333" />
+          <rect x="60" y="70" width="5" height="5" fill="#333" />
+          <rect x="75" y="70" width="5" height="5" fill="#333" />
+          <rect x="90" y="70" width="5" height="5" fill="#333" />
+          <rect x="65" y="80" width="5" height="5" fill="#333" />
+          <rect x="80" y="80" width="5" height="5" fill="#333" />
+          <rect x="60" y="90" width="5" height="5" fill="#333" />
+          <rect x="75" y="90" width="5" height="5" fill="#333" />
+          <rect x="85" y="90" width="5" height="5" fill="#333" />
+          <rect x="45" y="5" width="5" height="5" fill="#333" />
+          <rect x="45" y="15" width="5" height="5" fill="#333" />
+          <rect x="45" y="25" width="5" height="5" fill="#333" />
+          <rect x="45" y="35" width="5" height="5" fill="#333" />
+          <rect x="5" y="45" width="5" height="5" fill="#333" />
+          <rect x="15" y="45" width="5" height="5" fill="#333" />
+          <rect x="30" y="45" width="5" height="5" fill="#333" />
+          <rect x="40" y="45" width="5" height="5" fill="#333" />
+          <rect x="50" y="45" width="5" height="5" fill="#333" />
+          <rect x="60" y="45" width="5" height="5" fill="#333" />
+          <rect x="70" y="45" width="5" height="5" fill="#333" />
+          <rect x="80" y="45" width="5" height="5" fill="#333" />
+          <rect x="90" y="45" width="5" height="5" fill="#333" />
+          <rect x="42" y="42" width="16" height="16" rx="2" fill="#FF3CAC" />
+          <text x="50" y="53" text-anchor="middle" fill="white" font-size="10" font-weight="bold">B</text>
+        </svg>
+      </div>
+      <div class="rounded-xl p-3 mb-4" style="background:rgba(255,60,172,.1);border:1px solid rgba(255,60,172,.3)">
+        <p class="text-pink-400 font-black text-xl" id="qris-amount">Rp 25.000</p>
+        <p class="text-white/40 text-xs mt-0.5">Bymoment Booth</p>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="confirmQRIS()" class="btn-neon ripple py-3 rounded-xl text-sm font-bold">✅ Konfirmasi</button>
+        <button onclick="closeQRISModal()"
+          class="py-3 rounded-xl text-sm font-semibold text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70 transition-all">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAS CONFIG MODAL -->
+  <div id="gas-modal" class="modal-overlay hidden">
+    <div class="glass rounded-2xl p-6 max-w-md w-full mx-4 animate-bounce-in">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xl">⚙️</span>
+        <h3 class="font-black text-lg grad-text">Konfigurasi Google Apps Script</h3>
+      </div>
+      <p class="text-white/40 text-xs mb-4 font-medium">Masukkan URL Web App dari Google Apps Script Anda untuk
+        mengaktifkan sinkronisasi data ke Google Sheets.</p>
+      <label class="block text-xs font-semibold text-white/40 uppercase tracking-widest mb-2">Web App URL</label>
+      <input id="gas-url-input" type="url" placeholder="https://script.google.com/macros/s/.../exec"
+        class="pos-input w-full px-4 py-3 text-sm font-medium mb-4" />
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="saveGASConfig()" class="btn-neon ripple py-3 rounded-xl text-sm font-bold">💾 Simpan</button>
+        <button onclick="document.getElementById('gas-modal').classList.add('hidden')"
+          class="py-3 rounded-xl text-sm font-semibold text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70 transition-all">Tutup</button>
+      </div>
+      <div id="gas-status" class="mt-3 text-xs text-center text-white/30"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ── STATE ── */
+    const STATE = {
+      sesi: 1, print: 0, queue: [], transactions: [],
+      gasUrl: localStorage.getItem('bymoment_gas_url') || '',
+      pendingPaymentMethod: null,
+    };
+    const PRICE = { sesi: 25000, print: 10000 };
+    const MINS_PER_SESI = 10;
+
+    /* ── UTILS ── */
+    function formatRp(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+    function fmtTime(s) { return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
+    function genId() { return 'TRX-' + Date.now().toString(36).toUpperCase(); }
+    function nowStr() { return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', hour12: false }); }
+
+    /* ── TOAST ── */
+    function showToast(msg, type = 'info', dur = 3000) {
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerHTML = msg;
+      document.body.appendChild(t);
+      setTimeout(() => {
+        t.style.cssText += 'opacity:0;transform:translateX(120%);transition:.3s';
+        setTimeout(() => t.remove(), 300);
+      }, dur);
+    }
+
+    /* ── CLOCK ── */
+    function updateClock() {
+      const d = new Date();
+      const te = document.getElementById('header-time');
+      const de = document.getElementById('header-date');
+      if (!te) return;
+      te.textContent = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      de.textContent = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    setInterval(updateClock, 1000); updateClock();
+
+    // const GAS_URL = "https://script.google.com/macros/s/AKfycbyc1qQrF4Db1zuDUFPJQ-is1w7VbZXjPQKB_foWcNcVYUDmO6mFXcQVNTW9pPJ_RQuhfA/exec";
+    // localStorage.setItem('gas_web_app_url', GAS_URL);
+
+
+    document.getElementById('toggle-pw').addEventListener('click', () => {
+      const pw = document.getElementById('login-password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      // PASTE URL WEB APP BARU HASIL DEPLOY DI SINI
+      const MY_GAS_URL = "https://script.google.com/macros/s/AKfycbzvq9BFYZRwsUx3iEIP63X3vBK514QhCL-VDO4qY5ROwgSh82bULTm1jCyJFQgMQpnbbw/exec";
+
+      STATE.gasUrl = MY_GAS_URL;
+      localStorage.setItem('bymoment_gas_url', MY_GAS_URL);
+
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      const btn = document.getElementById('login-btn');
+      const btnTxt = document.getElementById('login-btn-text');
+      const spinner = document.getElementById('login-spinner');
+      const errEl = document.getElementById('login-error');
+
+      btnTxt.textContent = 'Memproses...';
+      spinner.classList.remove('hidden');
+      btn.disabled = true;
+      errEl.classList.add('hidden');
+
+      try {
+        // Menambahkan redirect mode & cache buster
+        const fetchUrl = `${MY_GAS_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&_ts=${Date.now()}`;
+
+        const res = await fetch(fetchUrl, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+
+        const data = await res.json();
+
+        if (data.success === true || data.status === 'success') {
+          localStorage.setItem('bymoment_session', JSON.stringify({ username: data.username || username, ts: Date.now() }));
+          showDashboard(data.username || username);
+        } else {
+          errEl.textContent = '⚠️ ' + (data.message || 'Username atau Password salah!');
+          errEl.classList.remove('hidden');
+          btnTxt.textContent = '✨ Masuk ke Dashboard';
+          spinner.classList.add('hidden');
+          btn.disabled = false;
+        }
+      } catch (error) {
+        console.error('Error Login:', error);
+        errEl.textContent = '⚠️ Gagal terhubung ke Google Sheets. Cek koneksi / URL GAS!';
+        errEl.classList.remove('hidden');
+        btnTxt.textContent = '✨ Masuk ke Dashboard';
+        spinner.classList.add('hidden');
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('bymoment_session');
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('login-page').classList.remove('hidden');
+      STATE.queue.forEach(q => { if (q.interval) clearInterval(q.interval); });
+      showToast('👋 Berhasil logout!', 'info');
+    });
+
+    function showDashboard(username) {
+      document.getElementById('login-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.remove('hidden');
+      document.getElementById('header-user').textContent = username;
+      updateCart(); renderQueue();
+      showToast(`✨ Selamat datang, ${username}!`, 'success');
+    }
+
+    (function checkSession() {
+      const s = JSON.parse(localStorage.getItem('bymoment_session') || 'null');
+      if (s && (Date.now() - s.ts) < 12 * 3600 * 1000) showDashboard(s.username);
+    })();
+
+    /* ── ORDER ── */
+    function changeQty(type, delta) {
+      if (type === 'sesi') STATE.sesi = Math.max(1, Math.min(10, STATE.sesi + delta));
+      else STATE.print = Math.max(0, Math.min(20, STATE.print + delta));
+      updateCart();
+      const el = document.getElementById(type === 'sesi' ? 'sesi-qty' : 'print-qty');
+      el.classList.remove('animate-bounce-in');
+      void el.offsetWidth;
+      el.classList.add('animate-bounce-in');
+      setTimeout(() => el.classList.remove('animate-bounce-in'), 500);
+    }
+
+    function setPreset(sesi, print) {
+      STATE.sesi = sesi; STATE.print = print; updateCart();
+      showToast(`⚡ Preset: ${sesi} Sesi, ${print} Extra Print`, 'info', 1500);
+    }
+
+    function resetOrder() {
+      STATE.sesi = 1; STATE.print = 0;
+      document.getElementById('order-note').value = '';
+      updateCart();
+      showToast('🔄 Pesanan di-reset', 'info', 1500);
+    }
+
+    function updateCart() {
+      const s = STATE.sesi, p = STATE.print;
+      const st = s * PRICE.sesi, pt = p * PRICE.print, tot = st + pt, dur = s * MINS_PER_SESI;
+      document.getElementById('sesi-qty').textContent = s;
+      document.getElementById('print-qty').textContent = p;
+      document.getElementById('sesi-subtotal').textContent = formatRp(st);
+      document.getElementById('print-subtotal').textContent = formatRp(pt);
+      document.getElementById('cart-sesi-desc').textContent = `${s}x @ ${formatRp(PRICE.sesi)}`;
+      document.getElementById('cart-print-desc').textContent = `${p}x @ ${formatRp(PRICE.print)}`;
+      document.getElementById('cart-sesi-amount').textContent = formatRp(st);
+      document.getElementById('cart-print-amount').textContent = formatRp(pt);
+      document.getElementById('cart-duration').textContent = `${dur} menit`;
+      document.getElementById('cart-total').textContent = formatRp(tot);
+      document.getElementById('qris-amount').textContent = formatRp(tot);
+      document.getElementById('sesi-minus').style.opacity = s <= 1 ? '0.3' : '1';
+      document.getElementById('print-minus').style.opacity = p <= 0 ? '0.3' : '1';
+    }
+
+    /* ── PAYMENT ── */
+    function processPayment(method) {
+      STATE.pendingPaymentMethod = method;
+      if (method === 'QRIS') document.getElementById('qris-modal').classList.remove('hidden');
+      else finishPayment(method);
+    }
+    function confirmQRIS() { closeQRISModal(); finishPayment('QRIS'); }
+    function closeQRISModal() { document.getElementById('qris-modal').classList.add('hidden'); }
+
+    async function finishPayment(method) {
+      const sesi = STATE.sesi, print = STATE.print, total = sesi * PRICE.sesi + print * PRICE.print;
+      const note = document.getElementById('order-note').value.trim();
+      const id = genId(), ts = nowStr(), dur = sesi * MINS_PER_SESI * 60;
+      const queueNum = STATE.queue.length + 1;
+      const item = { id, sesi, print, total, method, note, timestamp: ts, status: 'waiting', timeLeft: dur, interval: null, queueNum };
+      STATE.queue.push(item);
+      STATE.transactions.push({ id, sesi, print, total, method, note, timestamp: ts });
+      updateStats(); renderQueue();
+      STATE.sesi = 1; STATE.print = 0; document.getElementById('order-note').value = ''; updateCart();
+      showToast(`✅ Pembayaran ${method} berhasil! Antrean #${queueNum}`, 'success', 3500);
+      if (STATE.gasUrl) sendToGAS({ id, timestamp: ts, sesi, print, total, method, status: 'Selesai' });
+    }
+
+    async function sendToGAS(data) {
+      try { await fetch(STATE.gasUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), mode: 'no-cors' }); }
+      catch (e) { console.warn('GAS sync failed:', e); }
+    }
+
+    /* ── QUEUE ── */
+    function renderQueue() {
+      const list = document.getElementById('queue-list');
+      const empty = document.getElementById('queue-empty');
+      const count = document.getElementById('queue-count');
+      const active = STATE.queue.filter(q => q.status !== 'done').length;
+      count.textContent = `${active} antrean`;
+      list.querySelectorAll('.queue-card').forEach(e => e.remove());
+      empty.classList.toggle('hidden', STATE.queue.length > 0);
+      STATE.queue.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'queue-card p-4' + (item.status === 'running' ? ' active' : '') + (item.status === 'done' ? ' done' : '');
+        card.id = `qc-${item.id}`;
+        card.innerHTML = buildCard(item);
+        list.appendChild(card);
+      });
+    }
+
+    function buildCard(item) {
+      const labels = { waiting: '⏳ Menunggu', running: '▶️ Berjalan', done: '✅ Selesai' };
+      const badges = { waiting: 'badge-yellow', running: 'badge-pink', done: 'badge-green' };
+      const startDis = item.status !== 'waiting' ? 'opacity-40 pointer-events-none' : '';
+      const timerTxt = item.status === 'done' ? 'SELESAI' : fmtTime(item.timeLeft);
+      return `
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="font-black text-white text-sm">#${item.queueNum}</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-bold ${badges[item.status]}">${labels[item.status]}</span>
+          <span class="text-white/30 text-xs">${item.method}</span>
+        </div>
+        <div class="flex gap-3 text-xs text-white/50 flex-wrap">
+          <span>📸 ${item.sesi} Sesi</span>
+          ${item.print > 0 ? `<span>🖨️ ${item.print} Print</span>` : ''}
+          <span class="text-pink-400 font-bold">${formatRp(item.total)}</span>
+        </div>
+        ${item.note ? `<p class="text-white/30 text-xs mt-1 truncate">📝 ${item.note}</p>` : ''}
+        <p class="text-white/20 text-xs mt-1">${item.timestamp}</p>
+      </div>
+      <div class="flex flex-col items-end gap-2 shrink-0">
+        <div class="timer-display" id="tmr-${item.id}">${timerTxt}</div>
+        <div class="flex gap-2">
+          <button onclick="startQueue('${item.id}')" class="btn-neon ripple px-3 py-1.5 rounded-lg text-xs font-bold ${startDis}">▶ Start</button>
+          <button onclick="removeQueue('${item.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white/30 border border-white/10 hover:border-white/20 hover:text-white/60 transition-all">✕</button>
+        </div>
+      </div>
+    </div>`;
+    }
+
+    function startQueue(id) {
+      const item = STATE.queue.find(q => q.id === id);
+      if (!item || item.status !== 'waiting') return;
+      item.status = 'running';
+      const card = document.getElementById(`qc-${id}`);
+      if (card) { card.className = 'queue-card active p-4'; card.innerHTML = buildCard(item); }
+      showToast(`▶️ Timer dimulai — Antrean #${item.queueNum}`, 'info', 2000);
+      item.interval = setInterval(() => {
+        item.timeLeft--;
+        const tmr = document.getElementById(`tmr-${id}`);
+        if (tmr) tmr.textContent = fmtTime(item.timeLeft);
+        if (item.timeLeft <= 0) {
+          clearInterval(item.interval);
+          item.status = 'done';
+          playAlarm();
+          const c = document.getElementById(`qc-${id}`);
+          if (c) {
+            c.className = 'queue-card done p-4'; c.innerHTML = buildCard(item);
+            c.style.animation = 'none'; void c.offsetWidth; c.style.animation = 'alarmRing .15s ease-in-out 6';
+            setTimeout(() => c.style.animation = '', 1500);
+          }
+          renderQueueCount();
+          showToast(`🔔 Antrean #${item.queueNum} — SELESAI! Waktu habis.`, 'success', 5000);
+          if (Notification.permission === 'granted') {
+            new Notification('⏰ Bymoment Booth', {
+              body: `Sesi antrean #${item.queueNum} telah selesai!`,
+              icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📸</text></svg>'
+            });
+          }
+        }
+      }, 1000);
+    }
+
+    function renderQueueCount() {
+      const active = STATE.queue.filter(q => q.status !== 'done').length;
+      document.getElementById('queue-count').textContent = `${active} antrean`;
+    }
+
+    function removeQueue(id) {
+      const item = STATE.queue.find(q => q.id === id);
+      if (!item) return;
+      if (item.interval) clearInterval(item.interval);
+      STATE.queue = STATE.queue.filter(q => q.id !== id);
+      renderQueue();
+    }
+
+    function clearDoneQueues() {
+      STATE.queue.filter(q => q.status === 'done').forEach(q => { if (q.interval) clearInterval(q.interval); });
+      STATE.queue = STATE.queue.filter(q => q.status !== 'done');
+      renderQueue();
+      showToast('🗑️ Antrean selesai dihapus', 'info', 1500);
+    }
+
+    /* ── ALARM ── */
+    function playAlarm() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [880, 1100, 880, 1100, 880].forEach((freq, i) => {
+          const osc = ctx.createOscillator(), gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          const t = ctx.currentTime + i * .32;
+          osc.frequency.setValueAtTime(freq, t); osc.type = 'sine';
+          gain.gain.setValueAtTime(0.4, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+          osc.start(t); osc.stop(t + 0.3);
+        });
+      } catch (e) { console.warn('Audio alarm:', e); }
+    }
+
+    /* ── STATS ── */
+    function updateStats() {
+      const cnt = STATE.transactions.length;
+      const rev = STATE.transactions.reduce((s, t) => s + t.total, 0);
+      document.getElementById('footer-trx-count').textContent = cnt;
+      document.getElementById('footer-revenue').textContent = formatRp(rev);
+      document.getElementById('header-revenue').textContent = formatRp(rev);
+    }
+
+    /* ── GAS CONFIG ── */
+    function showGASConfig() {
+      document.getElementById('gas-url-input').value = STATE.gasUrl;
+      document.getElementById('gas-modal').classList.remove('hidden');
+    }
+    function saveGASConfig() {
+      const url = document.getElementById('gas-url-input').value.trim();
+      STATE.gasUrl = url; localStorage.setItem('bymoment_gas_url', url);
+      const st = document.getElementById('gas-status');
+      st.textContent = url ? '✅ URL tersimpan!' : '⚠️ URL dikosongkan.';
+      setTimeout(() => st.textContent = '', 2500);
+      showToast('💾 Konfigurasi GAS disimpan', 'success');
+    }
+
+    /* ── NOTIFICATION PERMISSION ── */
+    if ('Notification' in window && Notification.permission === 'default') {
+      setTimeout(() => Notification.requestPermission(), 3000);
+    }
+
+    /* ── INIT ── */
+    updateCart();
+    // URL Google Apps Script Anda
+
+  </script>
+</body>
+
+</html>
