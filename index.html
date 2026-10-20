@@ -111,7 +111,7 @@
 
         <button id="login-btn" type="submit"
           class="btn-neon w-full py-4 rounded-xl text-sm font-black mt-3 flex items-center justify-center gap-2">
-          <span id="login-btn-text">Masuk ke Kasir POS</span>
+          <span id="login-btn-text"></span>
           <div id="login-spinner" class="spinner hidden"></div>
         </button>
       </form>
@@ -204,7 +204,7 @@
       <section class="lg:col-span-7 space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl">🛍️</span>
+            <!-- <span class="text-xl">🛍️</span> -->
             <h3 class="font-extrabold text-white text-base tracking-wide">Pilih Paket &amp; Tambahan</h3>
           </div>
           <button onclick="resetTransactionForm()"
@@ -276,7 +276,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Menu Pintas
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Menu Pintas
             Cepat</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button onclick="setPreset(1, 0)"
@@ -305,7 +305,7 @@
         <div class="glass-card p-5 border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-lg">🎟️</span>
+              <!-- <span class="text-lg">🎟️</span> -->
               <h4 class="font-extrabold text-white text-sm">Promo Diskon / Bonus</h4>
             </div>
             <span id="promo-count-badge" class="badge-blue text-[11px] font-bold px-2.5 py-0.5 rounded-full">3 Promo
@@ -334,7 +334,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">📝 Catatan Kasir / Nama
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Catatan Kasir / Nama
             Pelanggan (Opsional)</label>
           <input id="order-note" type="text" placeholder="Contoh: Kak Dinda - Frame Biru Muda"
             class="glass-input w-full px-4 py-3 text-sm font-medium" />
@@ -392,12 +392,12 @@
           <div class="grid grid-cols-2 gap-3">
             <button id="pay-cash-btn" onclick="submitPayment('Cash')"
               class="btn-green py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 font-black text-sm">
-              <span class="text-xl">💵</span>
+              <!-- <span class="text-xl">💵</span> -->
               <span>Bayar Cash</span>
             </button>
             <button id="pay-qris-btn" onclick="submitPayment('QRIS')"
               class="btn-neon py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 font-black text-sm">
-              <span class="text-xl">📲</span>
+              <!-- <span class="text-xl">📲</span> -->
               <span>Bayar QRIS</span>
             </button>
           </div>
@@ -407,10 +407,10 @@
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <span class="text-xl">⏱️</span>
-              <h3 class="font-extrabold text-white text-base tracking-wide">Panel Sesi &amp; Antrean</h3>
+              <h3 class="font-extrabold text-white text-base tracking-wide">Panel Sesi &amp; Antrean </h3>
             </div>
             <div class="flex items-center gap-2">
-              <span id="queue-badge" class="badge-blue px-2.5 py-0.5 rounded-full text-xs font-bold">0 Sesi</span>
+              <span id="queue-badge" class="badge-blue px-2.5 py-0.5 rounded-full text-xs font-bold"> 0 Sesi</span>
               <button onclick="clearCompletedSessions()"
                 class="text-[11px] text-slate-400 hover:text-white transition-colors">
                 Bersihkan Selesai
@@ -621,11 +621,11 @@
       <div class="flex items-center justify-between gap-3">
         <button onclick="testGasConnection()" id="gas-test-btn"
           class="btn-cyan py-3 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5">
-          <span>🧪</span> <span>Uji Koneksi</span>
+          <span>Uji Koneksi</span>
         </button>
         <div class="flex items-center gap-2">
           <button onclick="saveGasSettings()" class="btn-neon py-3 px-5 rounded-xl text-xs font-bold">
-            💾 Simpan
+            Simpan
           </button>
           <button onclick="closeGasModal()"
             class="glass-card py-3 px-4 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
