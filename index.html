@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bymoment Booth — Kasir POS &amp; Timer Sesi</title>
-  <meta name="description" content="Sistem Kasir POS & Manajemen Photobox Bymoment Booth terintegrasi Google Sheets." />
+  <title>Photobooth — Kasir POS &amp; Timer Sesi</title>
+  <meta name="description" content="Sistem Kasir POS & Manajemen Photobooth terintegrasi Google Sheets." />
 
   <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,11 +24,11 @@
           },
           colors: {
             brand: {
-              pink: '#FF3CAC',
-              purple: '#784BA0',
-              blue: '#2B86C5',
-              cyan: '#00D4FF',
-              dark: '#0a0614',
+              blue: '#2563EB',
+              sky: '#0EA5E9',
+              cyan: '#06B6D4',
+              navy: '#0B1120',
+              dark: '#080C14',
               surface: 'rgba(255, 255, 255, 0.04)',
             }
           },
@@ -40,7 +40,7 @@
           },
           keyframes: {
             float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
-            pulseGlow: { '0%,100%': { boxShadow: '0 0 15px rgba(255,60,172,.3)' }, '50%': { boxShadow: '0 0 35px rgba(255,60,172,.7)' } },
+            pulseGlow: { '0%,100%': { boxShadow: '0 0 15px rgba(37,99,235,.25)' }, '50%': { boxShadow: '0 0 30px rgba(37,99,235,.55)' } },
             slideUp: { from: { opacity: 0, transform: 'translateY(20px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
             bounceIn: { '0%': { transform: 'scale(.7)', opacity: 0 }, '60%': { transform: 'scale(1.03)' }, '100%': { transform: 'scale(1)', opacity: 1 } },
           }
@@ -49,320 +49,16 @@
     }
   </script>
 
-  <style>
-    * {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #0a0614;
-      color: #f3f4f6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, .03);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #FF3CAC, #784BA0);
-      border-radius: 99px;
-    }
-
-    /* Utilities */
-    .grad-text {
-      background: linear-gradient(135deg, #FF3CAC 0%, #a855f7 50%, #00D4FF 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.035);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-    }
-
-    .glass-input {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      color: #fff;
-      transition: all 0.2s ease;
-    }
-
-    .glass-input:focus {
-      outline: none;
-      border-color: #FF3CAC;
-      box-shadow: 0 0 15px rgba(255, 60, 172, 0.3);
-    }
-
-    .btn-neon {
-      background: linear-gradient(135deg, #FF3CAC, #784BA0);
-      color: #fff;
-      font-weight: 700;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 20px rgba(255, 60, 172, 0.3);
-    }
-
-    .btn-neon:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(255, 60, 172, 0.55);
-      filter: brightness(1.1);
-    }
-
-    .btn-neon:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .btn-cyan {
-      background: linear-gradient(135deg, #00D4FF, #2B86C5);
-      color: #fff;
-      font-weight: 700;
-      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .btn-cyan:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.45);
-    }
-
-    .btn-green {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #fff;
-      font-weight: 700;
-      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
-      transition: all 0.2s ease;
-    }
-
-    .btn-green:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.45);
-    }
-
-    /* Qty Control Buttons */
-    .qty-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      font-weight: bold;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      transition: all 0.15s ease;
-    }
-
-    .qty-btn:hover {
-      background: rgba(255, 255, 255, 0.18);
-      transform: scale(1.05);
-    }
-
-    .qty-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* Badges */
-    .badge-pink {
-      background: rgba(255, 60, 172, 0.15);
-      color: #ff75c3;
-      border: 1px solid rgba(255, 60, 172, 0.35);
-    }
-
-    .badge-cyan {
-      background: rgba(0, 212, 255, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(0, 212, 255, 0.35);
-    }
-
-    .badge-green {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-    }
-
-    .badge-yellow {
-      background: rgba(245, 158, 11, 0.15);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
-
-    /* Ambient Background Orbs */
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Spinner */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Modal Overlay */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.78);
-      backdrop-filter: blur(12px);
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    /* Toasts */
-    .toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .toast-box {
-      background: #17112b;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border-radius: 14px;
-      padding: 12px 18px;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes toastIn {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    /* Thermal Receipt Stylings */
-    #thermal-receipt-container {
-      background: #fff;
-      color: #111;
-      font-family: 'Courier New', Courier, monospace;
-      padding: 20px 16px;
-      width: 320px;
-      border-radius: 8px;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
-      margin: 0 auto;
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .receipt-line {
-      border-bottom: 1px dashed #666;
-      margin: 8px 0;
-    }
-
-    .receipt-dline {
-      border-bottom: 2px dashed #222;
-      margin: 10px 0;
-    }
-
-    /* PRINT SPECIFIC STYLES (Universal Thermal 58mm/80mm & A4 Preview) */
-    /* PRINT SPECIFIC STYLES (Thermal 58mm / 80mm & A4 Preview) */
-    @media print {
-
-      /* 1. Hilangkan margin kertas bawaan browser */
-      @page {
-        margin: 0;
-        size: auto;
-      }
-
-      /* 2. Kunci tinggi & matikan overflow agar browser TIDAK MENAMBAH halaman 2 */
-      html,
-      body {
-        margin: 0 !important;
-        padding: 0 !important;
-        height: 100% !important;
-        overflow: hidden !important;
-        background: #fff !important;
-      }
-
-      /* 3. Sembunyikan elemen visual lain tanpa merusak parent/DOM */
-      body * {
-        visibility: hidden !important;
-      }
-
-      /* 4. TAMPILKAN KHUSUS #print-area dan isinya */
-      #print-area,
-      #print-area * {
-        visibility: visible !important;
-      }
-
-      /* 5. Tarik #print-area ke posisi fixed pojok kiri atas halaman cetak */
-      #print-area {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        max-width: 78mm !important;
-        /* Gunakan 78mm untuk printer 80mm / A4, atau 54mm untuk printer 58mm */
-        margin: 0 !important;
-        padding: 2mm !important;
-        background: #fff !important;
-        color: #000 !important;
-        box-shadow: none !important;
-        box-sizing: border-box !important;
-        font-family: 'Courier New', Courier, monospace, sans-serif !important;
-        font-size: 12px !important;
-        line-height: 1.2 !important;
-
-        /* Proteksi dari pemotongan halaman */
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
-<body class="selection:bg-pink-500 selection:text-white relative">
+<body class="selection:bg-blue-600 selection:text-white relative">
 
-  <!-- Ambient Glow Effects -->
+  <!-- Ambient Glow Effects (Executive Navy/Oceanic) -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: 0;">
-    <div class="orb w-[500px] h-[500px] -top-32 -left-32 bg-pink-600/10"></div>
-    <div class="orb w-[450px] h-[450px] -bottom-32 -right-32 bg-cyan-600/10"></div>
-    <div class="orb w-[350px] h-[350px] top-1/3 left-1/2 -translate-x-1/2 bg-purple-700/10"></div>
+    <div class="orb w-[500px] h-[500px] -top-32 -left-32 bg-blue-600/10"></div>
+    <div class="orb w-[450px] h-[450px] -bottom-32 -right-32 bg-sky-600/10"></div>
+    <div class="orb w-[350px] h-[350px] top-1/3 left-1/2 -translate-x-1/2 bg-slate-700/15"></div>
   </div>
 
   <div class="toast-container" id="toast-container"></div>
@@ -372,18 +68,18 @@
   <!-- ============================================================== -->
   <div id="login-page" class="relative z-10 min-h-screen flex items-center justify-center p-4">
     <div
-      class="glass-card w-full max-w-md p-8 md:p-10 border border-white/10 animate-bounce-in shadow-2xl relative overflow-hidden">
+      class="glass-card w-full max-w-md p-8 md:p-10 border border-slate-700/40 animate-bounce-in shadow-2xl relative overflow-hidden">
       <!-- Glow accent inside card -->
-      <div class="absolute -top-20 -right-20 w-44 h-44 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-20 -right-20 w-44 h-44 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Brand Logo / Avatar -->
       <div class="flex flex-col items-center text-center mb-8">
         <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg mb-4"
-          style="background: linear-gradient(135deg, #FF3CAC, #784BA0);">
+          style="background: linear-gradient(135deg, #2563eb, #0284c7);">
           📸
         </div>
-        <h1 class="text-2xl md:text-3xl font-black grad-text tracking-tight">Bymoment Booth</h1>
-        <p class="text-white/50 text-xs md:text-sm mt-1 font-medium">Sistem Kasir Photobox &amp; Sinkronisasi Sheets</p>
+        <h1 class="text-2xl md:text-3xl font-black grad-text tracking-tight">Photobooth</h1>
+        <p class="text-slate-400 text-xs md:text-sm mt-1 font-medium">Sistem Kasir Photobox &amp; Sinkronisasi Sheets</p>
       </div>
 
       <!-- Alert Error -->
@@ -396,22 +92,22 @@
       <!-- Login Form -->
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-white/60 uppercase tracking-wider mb-2">Username</label>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Username</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-white/40 text-sm">👤</span>
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm">👤</span>
             <input id="login-username" type="text" required placeholder="Contoh: admin"
               class="glass-input w-full pl-10 pr-4 py-3.5 text-sm font-medium" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-white/60 uppercase tracking-wider mb-2">Password</label>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Password</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-white/40 text-sm">🔒</span>
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm">🔒</span>
             <input id="login-password" type="password" required placeholder="••••••••"
               class="glass-input w-full pl-10 pr-11 py-3.5 text-sm font-medium" />
             <button type="button" id="toggle-pw"
-              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-white/40 hover:text-white transition-colors">
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors">
               <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -430,13 +126,9 @@
       </form>
 
       <!-- Demo Info & GAS Setting Link -->
-      <div class="mt-6 pt-5 border-t border-white/10 text-center space-y-2">
-        <p class="text-xs text-white/40">
-          💡 Akun default: <span class="text-pink-400 font-semibold">admin</span> / <span
-            class="text-pink-400 font-semibold">bymoment123</span>
-        </p>
+      <div class="mt-6 pt-5 border-t border-slate-800 text-center space-y-2">
         <button onclick="openGasModal()"
-          class="text-xs text-cyan-400/80 hover:text-cyan-300 font-semibold underline underline-offset-4">
+          class="text-xs text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4">
           ⚙️ Atur URL Web App (Google Apps Script)
         </button>
       </div>
@@ -449,17 +141,17 @@
   <div id="dashboard-page" class="hidden relative z-10 min-h-screen flex flex-col">
     <!-- Navbar / Header -->
     <header
-      class="border-b border-white/10 bg-[#0e081c]/80 backdrop-blur-md px-4 md:px-8 py-3.5 sticky top-0 z-30 flex flex-wrap items-center justify-between gap-4">
+      class="border-b border-slate-800 bg-[#0B1120]/90 backdrop-blur-md px-4 md:px-8 py-3.5 sticky top-0 z-30 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-md"
-          style="background: linear-gradient(135deg, #FF3CAC, #784BA0);">
+          style="background: linear-gradient(135deg, #2563eb, #0284c7);">
           📸
         </div>
         <div>
-          <h2 class="font-black text-lg grad-text leading-tight tracking-tight">Bymoment Booth</h2>
+          <h2 class="font-black text-lg grad-text leading-tight tracking-tight">Photobooth</h2>
           <div class="flex items-center gap-2">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-white/40 text-xs font-semibold">Point of Sale &bull; Apps Script Active</span>
+            <span class="text-slate-400 text-xs font-semibold">Point of Sale &bull; Apps Script Active</span>
           </div>
         </div>
       </div>
@@ -468,34 +160,34 @@
       <div class="flex items-center gap-2 md:gap-4 flex-wrap">
         <!-- Stock Indicator -->
         <div id="stock-badge"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04]">
+          class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/50 bg-slate-900/40">
           <span class="text-sm">🖨️</span>
           <div class="text-left">
-            <div class="text-[10px] text-white/40 uppercase font-bold tracking-wider">Stok Kertas</div>
+            <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Stok Kertas</div>
             <div class="text-xs md:text-sm font-black text-white"><span id="paper-stock-num">--</span> <span
-                class="text-white/40 font-normal text-xs">lbr</span></div>
+                class="text-slate-400 font-normal text-xs">lbr</span></div>
           </div>
         </div>
 
         <!-- Clock Display -->
         <div class="hidden sm:flex flex-col items-end px-3 py-1 text-right">
           <span id="live-time" class="text-white font-mono font-bold text-sm">--:--:--</span>
-          <span id="live-date" class="text-white/40 text-[11px] font-medium">---, --/--/----</span>
+          <span id="live-date" class="text-slate-400 text-[11px] font-medium">---, --/--/----</span>
         </div>
 
         <!-- Cashier Profile & Actions -->
-        <div class="flex items-center gap-2 pl-2 border-l border-white/10">
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
           <div class="hidden md:block text-right">
             <div id="cashier-name" class="text-xs font-bold text-white">Kasir</div>
-            <div id="cashier-user" class="text-[10px] text-pink-400 font-mono">@admin</div>
+            <div id="cashier-user" class="text-[10px] text-sky-400 font-mono">@admin</div>
           </div>
           <button onclick="refreshData()" title="Sinkronkan Promo & Stok"
-            class="p-2 rounded-xl border border-white/10 hover:border-cyan-400/50 hover:bg-white/5 text-white/70 hover:text-cyan-400 transition-all text-xs flex items-center gap-1">
+            class="p-2 rounded-xl border border-slate-700/50 hover:border-sky-400/50 hover:bg-slate-800/50 text-slate-300 hover:text-sky-400 transition-all text-xs flex items-center gap-1">
             <span>🔄</span>
             <span class="hidden md:inline text-xs font-semibold">Sync</span>
           </button>
           <button onclick="openGasModal()" title="Konfigurasi URL GAS"
-            class="p-2 rounded-xl border border-white/10 hover:border-pink-400/50 hover:bg-white/5 text-white/70 hover:text-pink-400 transition-all text-xs">
+            class="p-2 rounded-xl border border-slate-700/50 hover:border-blue-400/50 hover:bg-slate-800/50 text-slate-300 hover:text-blue-400 transition-all text-xs">
             ⚙️
           </button>
           <button onclick="handleLogout()"
@@ -523,38 +215,38 @@
             <h3 class="font-extrabold text-white text-base tracking-wide">Pilih Paket &amp; Tambahan</h3>
           </div>
           <button onclick="resetTransactionForm()"
-            class="text-xs font-semibold text-white/40 hover:text-white/80 transition-colors flex items-center gap-1">
+            class="text-xs font-semibold text-slate-400 hover:text-white transition-colors flex items-center gap-1">
             <span>🔄</span> Reset Form
           </button>
         </div>
 
         <!-- 1. Sesi Foto Card -->
         <div
-          class="glass-card p-5 relative overflow-hidden border border-white/10 hover:border-pink-500/30 transition-all">
+          class="glass-card p-5 relative overflow-hidden border border-slate-800 hover:border-blue-500/40 transition-all">
           <div class="flex items-start justify-between mb-4">
             <div>
               <div class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg shadow-sm"
-                  style="background: linear-gradient(135deg, #FF3CAC, #784BA0);">
+                  style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
                   📸
                 </div>
                 <div>
                   <h4 class="font-black text-white text-base">Sesi Foto Utama</h4>
-                  <p class="text-white/50 text-xs font-medium">1 Sesi = 5 Menit Foto + 1 Lembar Cetak Fisik</p>
+                  <p class="text-slate-400 text-xs font-medium">1 Sesi = 5 Menit Foto + 1 Lembar Cetak Fisik</p>
                 </div>
               </div>
             </div>
             <div class="text-right">
-              <span class="text-pink-400 font-black text-lg">Rp 25.000</span>
-              <p class="text-white/40 text-[11px]">/ sesi</p>
+              <span class="text-blue-400 font-black text-lg">Rp 25.000</span>
+              <p class="text-slate-400 text-[11px]">/ sesi</p>
             </div>
           </div>
 
-          <div class="flex items-center justify-between bg-black/40 rounded-xl p-3 border border-white/5">
+          <div class="flex items-center justify-between bg-black/40 rounded-xl p-3 border border-slate-800/80">
             <button class="qty-btn" onclick="updateQty('sesi', -1)">−</button>
             <div class="text-center">
               <span id="qty-sesi" class="text-3xl font-black text-white tabular-nums">1</span>
-              <span class="text-white/40 text-xs block font-semibold">Sesi Terpilih</span>
+              <span class="text-slate-400 text-xs block font-semibold">Sesi Terpilih</span>
             </div>
             <button class="qty-btn" onclick="updateQty('sesi', 1)">+</button>
           </div>
@@ -562,31 +254,31 @@
 
         <!-- 2. Extra Print Card -->
         <div
-          class="glass-card p-5 relative overflow-hidden border border-white/10 hover:border-cyan-500/30 transition-all">
+          class="glass-card p-5 relative overflow-hidden border border-slate-800 hover:border-sky-500/40 transition-all">
           <div class="flex items-start justify-between mb-4">
             <div>
               <div class="flex items-center gap-2.5">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg shadow-sm"
-                  style="background: linear-gradient(135deg, #00D4FF, #2B86C5);">
+                  style="background: linear-gradient(135deg, #0284c7, #0369a1);">
                   🖨️
                 </div>
                 <div>
                   <h4 class="font-black text-white text-base">Extra Print (Kertas Tambahan)</h4>
-                  <p class="text-white/50 text-xs font-medium">Cetak lembar fisik tambahan di luar paket sesi</p>
+                  <p class="text-slate-400 text-xs font-medium">Cetak lembar fisik tambahan di luar paket sesi</p>
                 </div>
               </div>
             </div>
             <div class="text-right">
-              <span class="text-cyan-400 font-black text-lg">Rp 10.000</span>
-              <p class="text-white/40 text-[11px]">/ lembar</p>
+              <span class="text-sky-400 font-black text-lg">Rp 10.000</span>
+              <p class="text-slate-400 text-[11px]">/ lembar</p>
             </div>
           </div>
 
-          <div class="flex items-center justify-between bg-black/40 rounded-xl p-3 border border-white/5">
+          <div class="flex items-center justify-between bg-black/40 rounded-xl p-3 border border-slate-800/80">
             <button class="qty-btn" onclick="updateQty('print', -1)">−</button>
             <div class="text-center">
               <span id="qty-print" class="text-3xl font-black text-white tabular-nums">0</span>
-              <span class="text-white/40 text-xs block font-semibold">Lembar Tambahan</span>
+              <span class="text-slate-400 text-xs block font-semibold">Lembar Tambahan</span>
             </div>
             <button class="qty-btn" onclick="updateQty('print', 1)">+</button>
           </div>
@@ -594,59 +286,59 @@
 
         <!-- 3. Quick Presets -->
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase tracking-wider mb-2">⚡ Menu Pintas Cepat</label>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Menu Pintas Cepat</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button onclick="setPreset(1, 0)"
-              class="glass-card p-3 text-center border border-white/10 hover:border-pink-500/50 hover:bg-white/5 transition-all rounded-xl">
+              class="glass-card p-3 text-center border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/40 transition-all rounded-xl">
               <div class="text-sm font-bold text-white">1 Sesi</div>
-              <div class="text-xs text-pink-400 font-semibold mt-0.5">Rp 25.000</div>
+              <div class="text-xs text-blue-400 font-semibold mt-0.5">Rp 25.000</div>
             </button>
             <button onclick="setPreset(2, 0)"
-              class="glass-card p-3 text-center border border-white/10 hover:border-pink-500/50 hover:bg-white/5 transition-all rounded-xl">
+              class="glass-card p-3 text-center border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/40 transition-all rounded-xl">
               <div class="text-sm font-bold text-white">2 Sesi</div>
-              <div class="text-xs text-pink-400 font-semibold mt-0.5">Rp 50.000</div>
+              <div class="text-xs text-blue-400 font-semibold mt-0.5">Rp 50.000</div>
             </button>
             <button onclick="setPreset(1, 1)"
-              class="glass-card p-3 text-center border border-white/10 hover:border-cyan-500/50 hover:bg-white/5 transition-all rounded-xl">
+              class="glass-card p-3 text-center border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/40 transition-all rounded-xl">
               <div class="text-sm font-bold text-white">1 Sesi + 1 Print</div>
-              <div class="text-xs text-cyan-400 font-semibold mt-0.5">Rp 35.000</div>
+              <div class="text-xs text-sky-400 font-semibold mt-0.5">Rp 35.000</div>
             </button>
             <button onclick="setPreset(2, 2)"
-              class="glass-card p-3 text-center border border-white/10 hover:border-purple-500/50 hover:bg-white/5 transition-all rounded-xl">
+              class="glass-card p-3 text-center border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/40 transition-all rounded-xl">
               <div class="text-sm font-bold text-white">2 Sesi + 2 Print</div>
-              <div class="text-xs text-purple-400 font-semibold mt-0.5">Rp 70.000</div>
+              <div class="text-xs text-sky-400 font-semibold mt-0.5">Rp 70.000</div>
             </button>
           </div>
         </div>
 
         <!-- 4. Dropdown Promo Dinamis -->
-        <div class="glass-card p-5 border border-white/10 space-y-3">
+        <div class="glass-card p-5 border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-lg">🎟️</span>
               <h4 class="font-extrabold text-white text-sm">Promo Diskon / Bonus</h4>
             </div>
-            <span id="promo-count-badge" class="badge-pink text-[11px] font-bold px-2 py-0.5 rounded-full">3 Promo
+            <span id="promo-count-badge" class="badge-blue text-[11px] font-bold px-2.5 py-0.5 rounded-full">3 Promo
               Aktif</span>
           </div>
 
           <div class="relative">
             <select id="promo-select" onchange="handlePromoChange()"
-              class="glass-input w-full px-4 py-3.5 text-sm font-medium appearance-none pr-10 bg-[#120a22] text-white">
+              class="glass-input w-full px-4 py-3.5 text-sm font-medium appearance-none pr-10 bg-[#0B1120] text-white">
               <option value="">-- Tanpa Promo (Standar) --</option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
               ▼
             </div>
           </div>
 
           <!-- Promo Highlight Description -->
           <div id="promo-description"
-            class="hidden p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs flex items-start gap-2.5">
+            class="hidden p-3 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs flex items-start gap-2.5">
             <span class="text-base">💡</span>
             <div>
-              <div id="promo-desc-title" class="font-bold text-purple-200">Keterangan Promo</div>
-              <div id="promo-desc-body" class="text-purple-300/80 mt-0.5">Penjelasan kalkulasi uang dan pemotongan stok
+              <div id="promo-desc-title" class="font-bold text-blue-200">Keterangan Promo</div>
+              <div id="promo-desc-body" class="text-blue-300/80 mt-0.5">Penjelasan kalkulasi uang dan pemotongan stok
                 kertas.</div>
             </div>
           </div>
@@ -654,7 +346,7 @@
 
         <!-- 5. Catatan / Nama Pelanggan -->
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase tracking-wider mb-2">📝 Catatan Kasir / Nama
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">📝 Catatan Kasir / Nama
             Pelanggan (Opsional)</label>
           <input id="order-note" type="text" placeholder="Contoh: Kak Dinda - Frame Biru Muda"
             class="glass-input w-full px-4 py-3 text-sm font-medium" />
@@ -668,21 +360,21 @@
       <section class="lg:col-span-5 space-y-5">
 
         <!-- Cart & Calculation Summary -->
-        <div class="glass-card p-5 border border-white/10 relative">
+        <div class="glass-card p-5 border border-slate-800 relative">
           <div class="flex items-center gap-2 mb-4">
             <span class="text-xl">🧾</span>
             <h3 class="font-extrabold text-white text-base tracking-wide">Ringkasan Pembayaran</h3>
           </div>
 
-          <div class="space-y-2.5 text-sm border-b border-white/10 pb-4 mb-4">
+          <div class="space-y-2.5 text-sm border-b border-slate-800 pb-4 mb-4">
             <!-- Line 1: Sesi -->
-            <div class="flex items-center justify-between text-white/70">
+            <div class="flex items-center justify-between text-slate-300">
               <span id="calc-sesi-label">Sesi Foto (1x)</span>
               <span id="calc-sesi-price" class="font-bold text-white">Rp 25.000</span>
             </div>
 
             <!-- Line 2: Extra Print -->
-            <div class="flex items-center justify-between text-white/70">
+            <div class="flex items-center justify-between text-slate-300">
               <span id="calc-print-label">Extra Print (0x)</span>
               <span id="calc-print-price" class="font-bold text-white">Rp 0</span>
             </div>
@@ -702,22 +394,22 @@
 
           <!-- Formula Info Badges: Total Kertas & Durasi Sesi -->
           <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-black/40 rounded-xl p-3 border border-white/5">
-              <div class="text-[11px] text-white/40 uppercase font-bold tracking-wider">🖨️ Cetak Fisik</div>
+            <div class="bg-black/40 rounded-xl p-3 border border-slate-800/80">
+              <div class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">🖨️ Cetak Fisik</div>
               <div class="text-base font-black text-cyan-400 mt-0.5" id="calc-total-kertas">1 Lembar</div>
-              <div class="text-[10px] text-white/30">(Sesi + Bonus + Print)</div>
+              <div class="text-[10px] text-slate-500">(Sesi + Bonus + Print)</div>
             </div>
-            <div class="bg-black/40 rounded-xl p-3 border border-white/5">
-              <div class="text-[11px] text-white/40 uppercase font-bold tracking-wider">⏱️ Durasi Sesi</div>
-              <div class="text-base font-black text-pink-400 mt-0.5" id="calc-total-duration">10 Menit</div>
-              <div class="text-[10px] text-white/30">(10 mnt / sesi)</div>
+            <div class="bg-black/40 rounded-xl p-3 border border-slate-800/80">
+              <div class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">⏱️ Durasi Sesi</div>
+              <div class="text-base font-black text-blue-400 mt-0.5" id="calc-total-duration">10 Menit</div>
+              <div class="text-[10px] text-slate-500">(10 mnt / sesi)</div>
             </div>
           </div>
 
           <!-- Total Bayar Highlight -->
           <div class="rounded-2xl p-4 mb-5"
-            style="background: linear-gradient(135deg, rgba(255, 60, 172, 0.12), rgba(120, 75, 160, 0.18)); border: 1px solid rgba(255, 60, 172, 0.3);">
-            <div class="text-xs font-bold text-white/60 mb-1">TOTAL YANG HARUS DIBAYAR</div>
+            style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(2, 132, 199, 0.16)); border: 1px solid rgba(59, 130, 246, 0.35);">
+            <div class="text-xs font-bold text-slate-300 mb-1">TOTAL YANG HARUS DIBAYAR</div>
             <div id="calc-grand-total" class="text-3xl font-black grad-text tabular-nums">Rp 25.000</div>
           </div>
 
@@ -739,16 +431,16 @@
         <!-- ============================================================== -->
         <!-- PANEL ANTREAN & SIKLUS TIMER SESI (Dinamis) -->
         <!-- ============================================================== -->
-        <div class="glass-card p-5 border border-white/10">
+        <div class="glass-card p-5 border border-slate-800">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
               <span class="text-xl">⏱️</span>
               <h3 class="font-extrabold text-white text-base tracking-wide">Panel Sesi &amp; Antrean</h3>
             </div>
             <div class="flex items-center gap-2">
-              <span id="queue-badge" class="badge-pink px-2.5 py-0.5 rounded-full text-xs font-bold">0 Sesi</span>
+              <span id="queue-badge" class="badge-blue px-2.5 py-0.5 rounded-full text-xs font-bold">0 Sesi</span>
               <button onclick="clearCompletedSessions()"
-                class="text-[11px] text-white/30 hover:text-white/60 transition-colors">
+                class="text-[11px] text-slate-400 hover:text-white transition-colors">
                 Bersihkan Selesai
               </button>
             </div>
@@ -756,10 +448,10 @@
 
           <!-- Queue List Container -->
           <div id="queue-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-            <div id="queue-empty" class="p-8 text-center border border-dashed border-white/10 rounded-2xl">
+            <div id="queue-empty" class="p-8 text-center border border-dashed border-slate-800 rounded-2xl">
               <div class="text-3xl mb-2 animate-float">📸</div>
-              <p class="text-white/50 font-bold text-sm">Belum Ada Sesi Berjalan</p>
-              <p class="text-white/30 text-xs mt-1">Lakukan pembayaran untuk membuat transaksi baru.</p>
+              <p class="text-slate-300 font-bold text-sm">Belum Ada Sesi Berjalan</p>
+              <p class="text-slate-500 text-xs mt-1">Lakukan pembayaran untuk membuat transaksi baru.</p>
             </div>
           </div>
         </div>
@@ -770,9 +462,9 @@
 
     <!-- Footer Status Bar -->
     <footer
-      class="border-t border-white/10 bg-[#0a0515]/90 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
+      class="border-t border-slate-800/80 bg-[#070b14]/90 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
       <div class="flex items-center gap-4">
-        <span>© 2026 Bymoment Booth POS</span>
+        <span>© 2026 Photobooth POS</span>
         <span class="hidden sm:inline">&bull;</span>
         <span class="hidden sm:inline">Tarif Sesi: Rp 25.000 (5 mnt)</span>
         <span class="hidden sm:inline">&bull;</span>
@@ -796,80 +488,78 @@
         <h4 class="font-black text-white text-base flex items-center gap-2">
           <span>🧾</span> Struk Pembayaran Kasir
         </h4>
-        <button onclick="closeReceiptModal()" class="text-white/40 hover:text-white text-xl font-bold">&times;</button>
+        <button onclick="closeReceiptModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
       </div>
 
-      <!-- Thermal Printable Container -->
-      <div id="print-area">
-        <div id="thermal-receipt-container">
-          <div style="text-align: center;">
-            <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">BYMOMENT BOOTH</div>
-            <div style="font-size: 10px; color: #555;">SELF PHOTOBOX STUDIO</div>
-            <div style="font-size: 10px; color: #555;">Instagram: @bymomentbooth</div>
-          </div>
+      <!-- Thermal Receipt Preview Container -->
+      <div id="thermal-receipt-container">
+        <div style="text-align: center;">
+          <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">PHOTOBOOTH</div>
+          <div style="font-size: 10px; color: #555;">SELF PHOTOBOX STUDIO</div>
+          <div style="font-size: 10px; color: #555;">Instagram: @photobooth</div>
+        </div>
 
-          <div class="receipt-line"></div>
+        <div class="receipt-line"></div>
 
-          <table style="width: 100%; font-size: 11px;">
-            <tr>
-              <td>No. TRX</td>
-              <td style="text-align: right; font-weight: bold;" id="rcpt-id">TRX-XXXX</td>
-            </tr>
-            <tr>
-              <td>Waktu</td>
-              <td style="text-align: right;" id="rcpt-time">--/--/---- --:--</td>
-            </tr>
-            <tr>
-              <td>Kasir</td>
-              <td style="text-align: right;" id="rcpt-cashier">Admin</td>
-            </tr>
-            <tr>
-              <td>Metode</td>
-              <td style="text-align: right; font-weight: bold;" id="rcpt-method">Cash</td>
-            </tr>
-            <tr>
-              <td>Status</td>
-              <td style="text-align: right; font-weight: bold;" id="rcpt-status">Berjalan</td>
-            </tr>
-          </table>
+        <table style="width: 100%; font-size: 11px;">
+          <tr>
+            <td>No. TRX</td>
+            <td style="text-align: right; font-weight: bold;" id="rcpt-id">TRX-XXXX</td>
+          </tr>
+          <tr>
+            <td>Waktu</td>
+            <td style="text-align: right;" id="rcpt-time">--/--/---- --:--</td>
+          </tr>
+          <tr>
+            <td>Kasir</td>
+            <td style="text-align: right;" id="rcpt-cashier">Admin</td>
+          </tr>
+          <tr>
+            <td>Metode</td>
+            <td style="text-align: right; font-weight: bold;" id="rcpt-method">Cash</td>
+          </tr>
+          <tr>
+            <td>Status</td>
+            <td style="text-align: right; font-weight: bold;" id="rcpt-status">Berjalan</td>
+          </tr>
+        </table>
 
-          <div class="receipt-dline"></div>
+        <div class="receipt-dline"></div>
 
-          <table style="width: 100%; font-size: 11px;">
-            <tr>
-              <td colspan="2" style="font-weight: bold;" id="rcpt-sesi-desc">1x Sesi Foto Utama</td>
-              <td style="text-align: right;" id="rcpt-sesi-price">Rp 25.000</td>
-            </tr>
-            <tr id="rcpt-print-row">
-              <td colspan="2" id="rcpt-print-desc">0x Extra Print</td>
-              <td style="text-align: right;" id="rcpt-print-price">Rp 0</td>
-            </tr>
-            <tr id="rcpt-promo-row">
-              <td colspan="2" style="color: #2b2b2b;" id="rcpt-promo-name">Promo: -</td>
-              <td style="text-align: right; color: #2b2b2b;" id="rcpt-promo-val">-</td>
-            </tr>
-          </table>
+        <table style="width: 100%; font-size: 11px;">
+          <tr>
+            <td colspan="2" style="font-weight: bold;" id="rcpt-sesi-desc">1x Sesi Foto Utama</td>
+            <td style="text-align: right;" id="rcpt-sesi-price">Rp 25.000</td>
+          </tr>
+          <tr id="rcpt-print-row">
+            <td colspan="2" id="rcpt-print-desc">0x Extra Print</td>
+            <td style="text-align: right;" id="rcpt-print-price">Rp 0</td>
+          </tr>
+          <tr id="rcpt-promo-row">
+            <td colspan="2" style="color: #2b2b2b;" id="rcpt-promo-name">Promo: -</td>
+            <td style="text-align: right; color: #2b2b2b;" id="rcpt-promo-val">-</td>
+          </tr>
+        </table>
 
-          <div class="receipt-line"></div>
+        <div class="receipt-line"></div>
 
-          <table style="width: 100%; font-size: 12px;">
-            <tr style="font-weight: 900;">
-              <td>TOTAL BAYAR</td>
-              <td style="text-align: right; font-size: 14px;" id="rcpt-total">Rp 25.000</td>
-            </tr>
-            <tr>
-              <td style="font-size: 11px;">Total Kertas Cetak</td>
-              <td style="text-align: right; font-weight: bold; font-size: 11px;" id="rcpt-kertas">1 Lembar</td>
-            </tr>
-          </table>
+        <table style="width: 100%; font-size: 12px;">
+          <tr style="font-weight: 900;">
+            <td>TOTAL BAYAR</td>
+            <td style="text-align: right; font-size: 14px;" id="rcpt-total">Rp 25.000</td>
+          </tr>
+          <tr>
+            <td style="font-size: 11px;">Total Kertas Cetak</td>
+            <td style="text-align: right; font-weight: bold; font-size: 11px;" id="rcpt-kertas">1 Lembar</td>
+          </tr>
+        </table>
 
-          <div class="receipt-dline"></div>
+        <div class="receipt-dline"></div>
 
-          <div style="text-align: center; font-size: 10px; margin-top: 6px;">
-            <div>*** TERIMA KASIH ***</div>
-            <div>Simpan struk ini sebagai bukti foto Anda.</div>
-            <div>Tag kami di IG Stories @bymomentbooth ✨</div>
-          </div>
+        <div style="text-align: center; font-size: 10px; margin-top: 6px;">
+          <div>*** TERIMA KASIH ***</div>
+          <div>Simpan struk ini sebagai bukti foto Anda.</div>
+          <div>Tag kami di IG Stories @photobooth ✨</div>
         </div>
       </div>
 
@@ -880,7 +570,7 @@
           <span>🖨️</span> Cetak Struk
         </button>
         <button onclick="closeReceiptModal()"
-          class="glass-card py-3 rounded-xl text-sm font-bold text-white/70 hover:text-white border border-white/10 hover:border-white/30 transition-all">
+          class="glass-card py-3 rounded-xl text-sm font-bold text-slate-300 hover:text-white border border-slate-700/50 hover:border-slate-500 transition-all">
           Lanjut ke Timer &rarr;
         </button>
       </div>
@@ -893,10 +583,10 @@
   <div id="qris-modal" class="modal-backdrop hidden">
     <div class="glass-card max-w-sm w-full p-6 text-center animate-bounce-in">
       <div class="text-3xl mb-2">📲</div>
-      <h3 class="font-black text-lg grad-text">Scan QRIS Bymoment</h3>
-      <p class="text-white/50 text-xs mb-4">Arahkan kamera aplikasi pembayaran pelanggan ke kode berikut</p>
+      <h3 class="font-black text-lg grad-text">Scan QRIS Pembayaran</h3>
+      <p class="text-slate-400 text-xs mb-4">Arahkan kamera aplikasi pembayaran pelanggan ke kode berikut</p>
 
-      <!-- Generated SVG QR Mockup with Brand Center -->
+      <!-- Generated SVG QR Mockup with Professional Brand Center -->
       <div class="bg-white p-4 rounded-2xl mx-auto w-52 h-52 flex items-center justify-center shadow-inner">
         <svg viewBox="0 0 120 120" class="w-full h-full">
           <!-- Corners -->
@@ -926,25 +616,24 @@
           <rect x="50" y="80" width="8" height="8" fill="#111" />
           <rect x="65" y="95" width="8" height="8" fill="#111" />
 
-          <!-- Brand Center Icon -->
-          <rect x="46" y="46" width="28" height="28" rx="6" fill="#FF3CAC" />
+          <!-- Professional Brand Center Icon -->
+          <rect x="46" y="46" width="28" height="28" rx="6" fill="#2563EB" />
           <text x="60" y="64" text-anchor="middle" fill="#fff" font-size="16" font-weight="900"
-            font-family="sans-serif">B</text>
+            font-family="sans-serif">P</text>
         </svg>
       </div>
 
-      <div class="my-4 p-3 rounded-xl bg-pink-500/10 border border-pink-500/30">
-        <span class="text-xs text-white/50 block">Jumlah Pembayaran:</span>
-        <span id="qris-amount-display" class="text-2xl font-black text-pink-400">Rp 25.000</span>
+      <div class="my-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/30">
+        <span class="text-xs text-slate-400 block">Jumlah Pembayaran:</span>
+        <span id="qris-amount-display" class="text-2xl font-black text-blue-400">Rp 25.000</span>
       </div>
 
       <div class="grid grid-cols-2 gap-2">
-        <button onclick="confirmQrisPayment()" class="btn-n
-        eon py-3 rounded-xl text-sm font-bold">
+        <button onclick="confirmQrisPayment()" class="btn-neon py-3 rounded-xl text-sm font-bold">
           ✅ Konfirmasi Lunas
         </button>
         <button onclick="closeQrisModal()"
-          class="glass-card py-3 rounded-xl text-sm font-bold text-white/50 hover:text-white">
+          class="glass-card py-3 rounded-xl text-sm font-bold text-slate-400 hover:text-white">
           Batal
         </button>
       </div>
@@ -960,17 +649,17 @@
         <span class="text-xl">⚙️</span>
         <h3 class="font-black text-lg grad-text">Konfigurasi Google Apps Script (GAS)</h3>
       </div>
-      <p class="text-white/50 text-xs mb-4 leading-relaxed">
+      <p class="text-slate-400 text-xs mb-4 leading-relaxed">
         Masukkan URL Web App dari deployment Google Apps Script Anda (akhiran <code
-          class="text-pink-400 font-mono">/exec</code>). Pastikan saat deploy akses disetel ke <b>"Anyone"</b>.
+          class="text-sky-400 font-mono">/exec</code>). Pastikan saat deploy akses disetel ke <b>"Anyone"</b>.
       </p>
 
-      <label class="block text-xs font-bold text-white/60 uppercase tracking-wider mb-2">Web App URL</label>
+      <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Web App URL</label>
       <input id="gas-url-input" type="url" placeholder="https://script.google.com/macros/s/.../exec"
         class="glass-input w-full px-4 py-3 text-xs md:text-sm font-mono mb-2" />
       <div class="flex justify-end mb-4">
         <button type="button" onclick="document.getElementById('gas-url-input').value = DEFAULT_GAS_URL;"
-          class="text-[11px] text-pink-400 hover:text-pink-300 font-semibold underline">
+          class="text-[11px] text-sky-400 hover:text-sky-300 font-semibold underline">
           ↺ Reset ke URL Bawaan
         </button>
       </div>
@@ -985,7 +674,7 @@
             💾 Simpan
           </button>
           <button onclick="closeGasModal()"
-            class="glass-card py-3 px-4 rounded-xl text-xs font-bold text-white/50 hover:text-white">
+            class="glass-card py-3 px-4 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
             Tutup
           </button>
         </div>
@@ -995,1014 +684,14 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- JAVASCRIPT LOGIC & GAS INTEGRATION -->
+  <!-- THERMAL RECEIPT PRINT AREA (Direct child of body, strictly isolated) -->
   <!-- ============================================================== -->
-  <script>
-    // Auto-detect URL GAS saat dijalankan dari Google Apps Script (HtmlService)
-    // Jika dibuka dari GAS (script.google.com), gunakan URL halaman itu sendiri → same-origin
-    // Jika dibuka dari localhost/file, gunakan URL fallback hardcoded
-    const FALLBACK_GAS_URL = "https://script.google.com/macros/s/AKfycbw0kao-EtoKUzUlb3TFmCoNiV8h8FdsoSyaQ5adIP88CdaqwqpXeYMF7xuGE_CiLELnuw/exec";
-    const IS_RUNNING_ON_GAS = window.location.href.includes('script.google.com') || window.location.href.includes('googleusercontent.com');
-    const DEFAULT_GAS_URL = IS_RUNNING_ON_GAS
-      ? window.location.href.split('?')[0]  // URL halaman itu sendiri = GAS endpoint
-      : FALLBACK_GAS_URL;
-
-    let storedGasUrl = localStorage.getItem('bymoment_gas_url');
-    // Hapus URL tersimpan jika sudah tidak sesuai (misalnya deployment lama)
-    if (storedGasUrl && IS_RUNNING_ON_GAS) {
-      // Saat dijalankan dari GAS, selalu pakai URL otomatis (bukan localStorage)
-      storedGasUrl = null;
-    }
-
-    /* ── 1. GLOBAL CONSTANTS & CONFIG ───────────────────────────── */
-    const PRICE_SESI = 25000;      // 1 Sesi Foto = Rp 25.000
-    const PRICE_EXTRA_PRINT = 10000; // Extra Print = Rp 10.000 / lembar
-    const DURATION_PER_SESI_MINUTES = 5; // 1 Sesi = 5 menit (300 detik)
-
-    /* ── 2. APPLICATION STATE ────────────────────────────────────── */
-    const STATE = {
-      gasUrl: storedGasUrl || DEFAULT_GAS_URL,
-      currentUser: JSON.parse(localStorage.getItem('bymoment_user') || 'null'),
-      paperStock: Number(localStorage.getItem('bymoment_paper_stock')) || 0,
-      promos: JSON.parse(localStorage.getItem('bymoment_promos') || '[]'),
-
-      // Form Input State
-      sesi: 1,
-      extraPrint: 0,
-      selectedPromo: null,
-
-      // Active Queues & Sessions
-      queue: JSON.parse(localStorage.getItem('bymoment_active_queues') || '[]'),
-
-      // Temporary Modal State
-      pendingMethod: 'Cash',
-      lastTransaction: null
-    };
-
-    /**
-     * Helper Safe Fetch untuk Google Apps Script.
-     * Saat app dijalankan dari GAS (HtmlService), semua request sudah same-origin
-     * sehingga fetch() biasa bekerja sempurna tanpa masalah CORS.
-     */
-    async function safeGasFetch(url, options = {}) {
-      try {
-        const response = await fetch(url, { ...options, redirect: 'follow' });
-
-        if (!response.ok) {
-          const status = response.status;
-          let errMsg = `Server merespon error HTTP ${status}.`;
-          if (status === 404) {
-            errMsg = `URL GAS tidak ditemukan (404). Periksa URL di menu Konfigurasi.`;
-          }
-          return { success: false, error: errMsg, status: status };
-        }
-
-        const text = await response.text();
-        const trimmed = (text || '').trim();
-
-        if (trimmed.startsWith('<')) {
-          let htmlMsg = 'GAS mengembalikan HTML (bukan JSON).';
-          if (trimmed.includes('accounts.google.com') || trimmed.includes('Sign in')) {
-            htmlMsg = 'Akses ditolak: GAS meminta login. Pastikan deployment "Who has access: Anyone".';
-          } else if (trimmed.includes('Not Found') || trimmed.includes('404')) {
-            htmlMsg = 'Web App GAS tidak ditemukan (404). Pastikan sudah di-deploy.';
-          }
-          return { success: false, error: htmlMsg, isHtml: true };
-        }
-
-        try {
-          return JSON.parse(trimmed);
-        } catch (parseErr) {
-          return { success: false, error: 'Format JSON dari server tidak valid.' };
-        }
-
-      } catch (networkErr) {
-        console.error('Network Error safeGasFetch:', networkErr);
-        return { success: false, error: 'Koneksi gagal. Periksa koneksi internet dan URL GAS.' };
-      }
-    }
-
-    /* ── 3. HELPER UTILS ─────────────────────────────────────────── */
-    function formatRp(num) {
-      return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
-    }
-
-    function formatTimeSeconds(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
-
-    function generateTransactionId() {
-      const now = new Date();
-      const datePart = now.getFullYear().toString().slice(-2) +
-        String(now.getMonth() + 1).padStart(2, '0') +
-        String(now.getDate()).padStart(2, '0');
-      const randomPart = Math.random().toString(36).substring(2, 6).toUpperCase();
-      return `TRX-${datePart}-${randomPart}`;
-    }
-
-    function showToast(message, type = 'info', duration = 3000) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'toast-box';
-
-      const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-      };
-
-      toast.innerHTML = `<span>${icons[type] || '💡'}</span><span>${message}</span>`;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.transition = 'all 0.3s ease';
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => toast.remove(), 300);
-      }, duration);
-    }
-
-    /* ── 4. INITIALIZATION & CLOCK ───────────────────────────────── */
-    function initClock() {
-      function update() {
-        const now = new Date();
-        const te = document.getElementById('live-time');
-        const de = document.getElementById('live-date');
-        if (te) te.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
-        if (de) de.textContent = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-      }
-      setInterval(update, 1000);
-      update();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initClock();
-
-      // Cek apakah ada session aktif
-      if (STATE.currentUser) {
-        showDashboardView();
-        // Sinkronisasi data promo & stok kertas terkini dari GAS
-        fetchDashboardData(true);
-      } else {
-        showLoginView();
-      }
-
-      // Resume timer untuk queue yang sedang berjalan
-      resumeActiveTimers();
-
-      // Auto-sync stok kertas dan promo setiap 60 detik jika sedang aktif
-      setInterval(() => {
-        if (STATE.currentUser && !document.hidden) {
-          fetchDashboardData(true);
-        }
-      }, 60000);
-    });
-
-    /* ── 5. AUTHENTICATION & LOGIN LOGIC ─────────────────────────── */
-    document.getElementById('toggle-pw').addEventListener('click', () => {
-      const input = document.getElementById('login-password');
-      input.type = input.type === 'password' ? 'text' : 'password';
-    });
-
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const usernameInput = document.getElementById('login-username').value.trim();
-      const passwordInput = document.getElementById('login-password').value.trim();
-      const btn = document.getElementById('login-btn');
-      const btnTxt = document.getElementById('login-btn-text');
-      const spinner = document.getElementById('login-spinner');
-      const errBox = document.getElementById('login-error');
-      const errMsg = document.getElementById('login-error-msg');
-
-      btnTxt.textContent = 'Memverifikasi...';
-      spinner.classList.remove('hidden');
-      btn.disabled = true;
-      errBox.classList.add('hidden');
-
-      try {
-        const gasUrl = (STATE.gasUrl || DEFAULT_GAS_URL).trim();
-        const sep = gasUrl.includes('?') ? '&' : '?';
-        const targetUrl = `${gasUrl}${sep}action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}&_ts=${Date.now()}`;
-
-        const result = await safeGasFetch(targetUrl, {
-          method: 'GET',
-          redirect: 'follow'
-        });
-
-        if (result && result.success === true) {
-          // 1. Simpan data user yang berhasil login
-          STATE.currentUser = result.user || { username: usernameInput, nama: usernameInput };
-          localStorage.setItem('bymoment_user', JSON.stringify(STATE.currentUser));
-
-          // 2. Tangkap data promos langsung dari response JSON login & simpan
-          if (Array.isArray(result.promos)) {
-            STATE.promos = result.promos;
-            localStorage.setItem('bymoment_promos', JSON.stringify(result.promos));
-            renderPromoDropdown();
-          }
-
-          // 3. Tangkap data stok kertas fisik langsung dari response JSON login & simpan
-          if (typeof result.stok === 'number') {
-            STATE.paperStock = result.stok;
-            localStorage.setItem('bymoment_paper_stock', result.stok);
-            updatePaperStockDisplay(result.stok);
-          }
-
-          showToast(`Selamat datang, ${STATE.currentUser.nama || STATE.currentUser.username}!`, 'success');
-          showDashboardView();
-        } else {
-          errMsg.textContent = (result && result.error) ? result.error : 'Username atau password salah!';
-          errBox.classList.remove('hidden');
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-        errMsg.textContent = 'Gagal menghubungi Google Apps Script. Periksa koneksi internet atau URL GAS!';
-        errBox.classList.remove('hidden');
-      } finally {
-        btnTxt.textContent = 'Masuk ke Kasir POS';
-        spinner.classList.add('hidden');
-        btn.disabled = false;
-      }
-    });
-
-    function showDashboardView() {
-      document.getElementById('login-page').classList.add('hidden');
-      document.getElementById('dashboard-page').classList.remove('hidden');
-
-      const user = STATE.currentUser || { username: 'admin', nama: 'Admin' };
-      document.getElementById('cashier-name').textContent = user.nama || user.username;
-      document.getElementById('cashier-user').textContent = '@' + user.username;
-
-      // Render stok kertas & dropdown promo yang tersimpan
-      updatePaperStockDisplay(STATE.paperStock);
-      renderPromoDropdown();
-
-      calculateAndRenderOrder();
-      renderQueueList();
-    }
-
-    function showLoginView() {
-      document.getElementById('dashboard-page').classList.add('hidden');
-      document.getElementById('login-page').classList.remove('hidden');
-    }
-
-    function handleLogout() {
-      if (confirm('Yakin ingin logout dari sistem Kasir?')) {
-        localStorage.removeItem('bymoment_user');
-        STATE.currentUser = null;
-        showLoginView();
-        showToast('Berhasil logout!', 'info');
-      }
-    }
-
-    /* ── 6. PROMO & STOCK SYNC (fetchDashboardData) ─────────────── */
-    /**
-     * Mengambil stok kertas dan promo aktif dari endpoint mandiri:
-     * - GET ?action=getStok   -> { success: true, stok: ... }
-     * - GET ?action=getPromos  -> { success: true, promos: [...] }
-     */
-    async function fetchDashboardData(silent = false) {
-      try {
-        const gasUrl = (STATE.gasUrl || DEFAULT_GAS_URL).trim();
-        if (!gasUrl) return;
-
-        const sep = gasUrl.includes('?') ? '&' : '?';
-        const urlStok = `${gasUrl}${sep}action=getStok&_ts=${Date.now()}`;
-        const urlPromo = `${gasUrl}${sep}action=getPromos&_ts=${Date.now()}`;
-
-        const [dataStok, dataPromo] = await Promise.all([
-          safeGasFetch(urlStok, { redirect: 'follow' }),
-          safeGasFetch(urlPromo, { redirect: 'follow' })
-        ]);
-
-        let hasError = false;
-
-        // 1. Update Stok Kertas Fisik Murni dari GAS
-        if (dataStok && dataStok.success === true && typeof dataStok.stok === 'number') {
-          STATE.paperStock = dataStok.stok;
-          localStorage.setItem('bymoment_paper_stock', dataStok.stok);
-          updatePaperStockDisplay(dataStok.stok);
-        } else if (dataStok && dataStok.error) {
-          hasError = true;
-          console.warn('Gagal ambil stok:', dataStok.error);
-        }
-
-        // 2. Update Daftar Promo Murni dari GAS
-        if (dataPromo && dataPromo.success === true && Array.isArray(dataPromo.promos)) {
-          STATE.promos = dataPromo.promos;
-          localStorage.setItem('bymoment_promos', JSON.stringify(dataPromo.promos));
-          renderPromoDropdown();
-        } else if (dataPromo && dataPromo.error) {
-          hasError = true;
-          console.warn('Gagal ambil promo:', dataPromo.error);
-        }
-
-        if (!silent) {
-          if (hasError) {
-            const msg = (dataStok && dataStok.error) || (dataPromo && dataPromo.error) || 'Gagal sinkron data dari Google Sheets.';
-            showToast(msg, 'error', 4500);
-          } else {
-            showToast('Data stok & promo berhasil disinkronkan!', 'success');
-          }
-        }
-      } catch (err) {
-        console.error('Gagal fetchDashboardData:', err);
-        if (!silent) {
-          showToast('Gagal sinkron data dari Google Sheets. Periksa URL GAS.', 'error');
-        }
-      }
-    }
-
-    async function refreshData() {
-      showToast('Memperbarui data Promo & Stok Kertas...', 'info');
-      await fetchDashboardData(false);
-    }
-
-    function updatePaperStockDisplay(stock) {
-      STATE.paperStock = stock;
-      const el = document.getElementById('paper-stock-num');
-      const badge = document.getElementById('stock-badge');
-      if (el) el.textContent = stock;
-
-      if (badge) {
-        if (stock <= 10) {
-          badge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl border border-red-500/50 bg-red-500/15 text-red-300';
-        } else if (stock <= 30) {
-          badge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl border border-amber-500/50 bg-amber-500/15 text-amber-300';
-        } else {
-          badge.className = 'flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.04] text-white';
-        }
-      }
-    }
-
-    function renderPromoDropdown() {
-      const select = document.getElementById('promo-select');
-      const countBadge = document.getElementById('promo-count-badge');
-      if (!select) return;
-
-      const currentVal = select.value;
-      select.innerHTML = '<option value="">-- Tanpa Promo (Standar) --</option>';
-
-      STATE.promos.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.kode;
-
-        let labelTipe = '';
-        const tipeClean = String(p.tipe || '').trim().toUpperCase().replace(/\s+/g, '_');
-        if (tipeClean === 'POTONG_HARGA') labelTipe = `(Potongan ${formatRp(p.nilai)})`;
-        else if (tipeClean === 'GRATIS_SESI') labelTipe = `(Bonus ${p.nilai} Sesi)`;
-        else if (tipeClean === 'GRATIS_PRINT') labelTipe = `(Free ${p.nilai} Print)`;
-
-        opt.textContent = `${p.kode} - ${p.nama} ${labelTipe}`;
-        select.appendChild(opt);
-      });
-
-      if (currentVal && STATE.promos.some(p => p.kode === currentVal)) {
-        select.value = currentVal;
-      }
-
-      if (countBadge) {
-        countBadge.textContent = `${STATE.promos.length} Promo Aktif`;
-      }
-    }
-
-    /* ── 7. ORDER CALCULATION LOGIC ──────────────────────────────── */
-    function updateQty(type, delta) {
-      if (type === 'sesi') {
-        STATE.sesi = Math.max(1, Math.min(20, STATE.sesi + delta));
-        document.getElementById('qty-sesi').textContent = STATE.sesi;
-      } else if (type === 'print') {
-        STATE.extraPrint = Math.max(0, Math.min(50, STATE.extraPrint + delta));
-        document.getElementById('qty-print').textContent = STATE.extraPrint;
-      }
-      calculateAndRenderOrder();
-    }
-
-    function setPreset(sesi, print) {
-      STATE.sesi = sesi;
-      STATE.extraPrint = print;
-      document.getElementById('qty-sesi').textContent = sesi;
-      document.getElementById('qty-print').textContent = print;
-      calculateAndRenderOrder();
-      showToast(`Preset: ${sesi} Sesi, ${print} Extra Print`, 'info', 1500);
-    }
-
-    function handlePromoChange() {
-      const code = document.getElementById('promo-select').value;
-      STATE.selectedPromo = STATE.promos.find(p => p.kode === code) || null;
-      calculateAndRenderOrder();
-    }
-
-    function resetTransactionForm() {
-      STATE.sesi = 1;
-      STATE.extraPrint = 0;
-      STATE.selectedPromo = null;
-      document.getElementById('qty-sesi').textContent = '1';
-      document.getElementById('qty-print').textContent = '0';
-      document.getElementById('promo-select').value = '';
-      document.getElementById('order-note').value = '';
-      calculateAndRenderOrder();
-      showToast('Form pesanan telah di-reset', 'info');
-    }
-
-    /**
-     * KALKULASI LOGIKA BISNIS:
-     * - Tarif Dasar: 1 Sesi Foto = Rp 25.000 (1 foto sesi + 1 lembar kertas fisik)
-     * - Extra Print: Rp 10.000 / lembar
-     *
-     * Tipe Promo:
-     * 1. POTONG_HARGA: Mengurangi Total Bayar (Rp). Stok kertas normal = Sesi + Extra Print.
-     * 2. GRATIS_SESI : Total Bayar TETAP. Sesi foto total & stok kertas bertambah sebesar Nilai promo.
-     * 3. GRATIS_PRINT: Total Bayar TETAP. Stok kertas bertambah sebesar Nilai promo.
-     *
-     * Formulasi:
-     * - Total Kertas Fisik Terpotong = (Sesi Bayar + Bonus Sesi/Print Promo) + Extra Print
-     * - Total Bayar (Rp) = (Sesi Bayar * 25000) + (Extra Print * 10000) - Potongan Harga Promo
-     */
-    function calculateOrder() {
-      const sesiBayar = STATE.sesi;
-      const extraPrint = STATE.extraPrint;
-      const promo = STATE.selectedPromo;
-
-      let subtotalSesi = sesiBayar * PRICE_SESI;
-      let subtotalPrint = extraPrint * PRICE_EXTRA_PRINT;
-      let potonganHarga = 0;
-      let bonusSesi = 0;
-      let bonusPrint = 0;
-
-      if (promo) {
-        const pTipe = String(promo.tipe || '').trim().toUpperCase().replace(/\s+/g, '_');
-        if (pTipe === 'POTONG_HARGA') {
-          potonganHarga = Number(promo.nilai) || 0;
-        } else if (pTipe === 'GRATIS_SESI') {
-          bonusSesi = Number(promo.nilai) || 0;
-        } else if (pTipe === 'GRATIS_PRINT') {
-          bonusPrint = Number(promo.nilai) || 0;
-        }
-      }
-
-      // Grand Total Bayar (tidak boleh negatif)
-      let grandTotal = Math.max(0, subtotalSesi + subtotalPrint - potonganHarga);
-
-      // Total Sesi Fisik (termasuk bonus sesi)
-      let totalSesiNyata = sesiBayar + bonusSesi;
-
-      // Total Kertas Fisik
-      let totalKertasFisik = (sesiBayar + bonusSesi + bonusPrint) + extraPrint;
-
-
-      let totalDurasiMenit = totalSesiNyata * DURATION_PER_SESI_MINUTES;
-
-      return {
-        sesiBayar,
-        extraPrint,
-        promo,
-        subtotalSesi,
-        subtotalPrint,
-        potonganHarga,
-        bonusSesi,
-        bonusPrint,
-        totalSesiNyata,
-        totalKertasFisik,
-        totalDurasiMenit,
-        grandTotal
-      };
-    }
-
-    function calculateAndRenderOrder() {
-      const c = calculateOrder();
-
-      // Labels & Amounts
-      document.getElementById('calc-sesi-label').textContent = `Sesi Foto (${c.sesiBayar}x @ ${formatRp(PRICE_SESI)})`;
-      document.getElementById('calc-sesi-price').textContent = formatRp(c.subtotalSesi);
-
-      document.getElementById('calc-print-label').textContent = `Extra Print (${c.extraPrint}x @ ${formatRp(PRICE_EXTRA_PRINT)})`;
-      document.getElementById('calc-print-price').textContent = formatRp(c.subtotalPrint);
-
-      // Discount Row
-      const discRow = document.getElementById('calc-discount-row');
-      if (c.potonganHarga > 0) {
-        discRow.classList.remove('hidden');
-        document.getElementById('calc-discount-label').textContent = `Diskon (${c.promo.kode})`;
-        document.getElementById('calc-discount-price').textContent = `- ${formatRp(c.potonganHarga)}`;
-      } else {
-        discRow.classList.add('hidden');
-      }
-
-      // Bonus Row
-      const bonusRow = document.getElementById('calc-bonus-row');
-      if (c.bonusSesi > 0 || c.bonusPrint > 0) {
-        bonusRow.classList.remove('hidden');
-        if (c.bonusSesi > 0) {
-          document.getElementById('calc-bonus-label').textContent = `Bonus Promo (${c.promo.kode})`;
-          document.getElementById('calc-bonus-value').textContent = `+${c.bonusSesi} Sesi Gratis (+${c.bonusSesi * DURATION_PER_SESI_MINUTES} mnt)`;
-        } else {
-          document.getElementById('calc-bonus-label').textContent = `Bonus Promo (${c.promo.kode})`;
-          document.getElementById('calc-bonus-value').textContent = `+${c.bonusPrint} Lembar Print Gratis`;
-        }
-      } else {
-        bonusRow.classList.add('hidden');
-      }
-
-      // Kertas & Durasi
-      document.getElementById('calc-total-kertas').textContent = `${c.totalKertasFisik} Lembar`;
-      document.getElementById('calc-total-duration').textContent = `${c.totalDurasiMenit} Menit`;
-
-      // Grand Total
-      document.getElementById('calc-grand-total').textContent = formatRp(c.grandTotal);
-      document.getElementById('qris-amount-display').textContent = formatRp(c.grandTotal);
-
-      // Promo Description Box
-      const pDescBox = document.getElementById('promo-description');
-      if (c.promo) {
-        pDescBox.classList.remove('hidden');
-        document.getElementById('promo-desc-title').textContent = `${c.promo.nama} (${c.promo.tipe})`;
-        const descTipe = String(c.promo.tipe || '').trim().toUpperCase().replace(/\s+/g, '_');
-        if (descTipe === 'POTONG_HARGA') {
-          document.getElementById('promo-desc-body').textContent = `Hemat ${formatRp(c.potonganHarga)}. Kertas fisik dipotong normal (${c.totalKertasFisik} lembar).`;
-        } else if (descTipe === 'GRATIS_SESI') {
-          document.getElementById('promo-desc-body').textContent = `Mendapatkan bonus ${c.bonusSesi} sesi foto (durasi bertambah ${c.bonusSesi * DURATION_PER_SESI_MINUTES} menit & kertas fisik +${c.bonusSesi} lembar). Total bayar tetap.`;
-        } else if (descTipe === 'GRATIS_PRINT') {
-          document.getElementById('promo-desc-body').textContent = `Mendapatkan bonus ${c.bonusPrint} lembar cetak fisik tanpa biaya tambahan. Total bayar tetap.`;
-        }
-      } else {
-        pDescBox.classList.add('hidden');
-      }
-    }
-
-    /* ── 8. PAYMENT & TRANSACTION PROCESSING ─────────────────────── */
-    function submitPayment(method) {
-      STATE.pendingMethod = method;
-      if (method === 'QRIS') {
-        document.getElementById('qris-modal').classList.remove('hidden');
-      } else {
-        executePayment('Cash');
-      }
-    }
-
-    function confirmQrisPayment() {
-      closeQrisModal();
-      executePayment('QRIS');
-    }
-
-    function closeQrisModal() {
-      document.getElementById('qris-modal').classList.add('hidden');
-    }
-
-    /**
-     * TAHAP 1 PEMBAYARAN:
-     * - Catat transaksi ke Tab "Transaksi" dengan Status = 'Berjalan'
-     * - Backend langsung memotong stok di Tab "Stok" Sel B2
-     * - Tampilkan Modal Struk & Masukkan sesi ke Panel Antrean
-     */
-    async function executePayment(method) {
-      const calc = calculateOrder();
-      const note = document.getElementById('order-note').value.trim();
-      const trxId = generateTransactionId();
-      const now = new Date();
-      const waktuStr = now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-      const cashier = STATE.currentUser ? (STATE.currentUser.nama || STATE.currentUser.username) : 'Kasir';
-
-      // Persiapan data item antrean
-      const queueItem = {
-        id: trxId,
-        waktu: waktuStr,
-        sesi: calc.sesiBayar,
-        extraPrint: calc.extraPrint,
-        totalBayar: calc.grandTotal,
-        metode: method,
-        status: 'Berjalan', // Status awal sesuai spesifikasi
-        promo: calc.promo ? calc.promo.kode : '-',
-        kertasTerpotong: calc.totalKertasFisik,
-        durasiDetik: calc.totalDurasiMenit * 60,
-        timeLeft: calc.totalDurasiMenit * 60,
-        isTimerRunning: false,
-        cashier: cashier,
-        note: note
-      };
-
-      // Tambahkan ke antrean lokal
-      STATE.queue.unshift(queueItem);
-      saveQueuesToLocalStorage();
-      renderQueueList();
-
-      // Simpan untuk modal struk
-      STATE.lastTransaction = queueItem;
-
-      // Update estimasi sisa stok lokal
-      if (STATE.paperStock > 0) {
-        updatePaperStockDisplay(Math.max(0, STATE.paperStock - calc.totalKertasFisik));
-      }
-
-      showToast(`Transaksi ${trxId} tercatat! Sesi Siap Dimulai.`, 'success', 3500);
-
-      // Tampilkan Modal Struk Thermal
-      openReceiptModal(queueItem);
-
-      // Reset form order
-      resetTransactionForm();
-
-      // Kirim request ke Google Apps Script (action: 'create')
-      syncCreateTransaction(queueItem);
-    }
-
-    async function syncCreateTransaction(trx) {
-      try {
-        const url = (typeof STATE !== 'undefined' && STATE.gasUrl)
-          ? STATE.gasUrl
-          : DEFAULT_GAS_URL;
-
-        const bodyData = Object.assign({ action: 'create' }, trx);
-
-        console.log("=== DATA TRANSAKSI DIKIRIM KE GAS ===");
-        console.log(JSON.stringify(bodyData, null, 2));
-        console.log("kertasTerpotong:", bodyData.kertasTerpotong);
-        console.log("sesi:", bodyData.sesi);
-        console.log("extraPrint:", bodyData.extraPrint);
-
-        const result = await safeGasFetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(bodyData)
-        });
-
-        console.log("=== RESPON DARI GAS ===");
-        console.log(result);
-
-        if (result && result.success === true && typeof result.sisaStok === 'number') {
-          STATE.paperStock = result.sisaStok;
-
-          localStorage.setItem(
-            'bymoment_paper_stock',
-            result.sisaStok
-          );
-
-          updatePaperStockDisplay(result.sisaStok);
-        }
-
-        return result;
-
-      } catch (error) {
-        console.error("Gagal sinkron create trx ke GAS:", error);
-      }
-    }
-
-    /* ── 9. MODAL STRUK THERMAL ──────────────────────────────────── */
-    function openReceiptModal(trx) {
-      if (!trx) return;
-      document.getElementById('rcpt-id').textContent = trx.id;
-      document.getElementById('rcpt-time').textContent = trx.waktu;
-      document.getElementById('rcpt-cashier').textContent = trx.cashier || 'Admin';
-      document.getElementById('rcpt-method').textContent = trx.metode;
-      document.getElementById('rcpt-status').textContent = trx.status;
-
-      document.getElementById('rcpt-sesi-desc').textContent = `${trx.sesi}x Sesi Foto (@ ${formatRp(PRICE_SESI)})`;
-      document.getElementById('rcpt-sesi-price').textContent = formatRp(trx.sesi * PRICE_SESI);
-
-      const printRow = document.getElementById('rcpt-print-row');
-      if (trx.extraPrint > 0) {
-        printRow.classList.remove('hidden');
-        document.getElementById('rcpt-print-desc').textContent = `${trx.extraPrint}x Extra Print`;
-        document.getElementById('rcpt-print-price').textContent = formatRp(trx.extraPrint * PRICE_EXTRA_PRINT);
-      } else {
-        printRow.classList.add('hidden');
-      }
-
-      const promoRow = document.getElementById('rcpt-promo-row');
-      if (trx.promo && trx.promo !== '-') {
-        promoRow.classList.remove('hidden');
-        document.getElementById('rcpt-promo-name').textContent = `Promo: ${trx.promo}`;
-        document.getElementById('rcpt-promo-val').textContent = 'Diterapkan';
-      } else {
-        promoRow.classList.add('hidden');
-      }
-
-      document.getElementById('rcpt-total').textContent = formatRp(trx.totalBayar);
-      document.getElementById('rcpt-kertas').textContent = `${trx.kertasTerpotong} Lembar Fisik`;
-
-      document.getElementById('receipt-modal').classList.remove('hidden');
-    }
-
-    function closeReceiptModal() {
-      document.getElementById('receipt-modal').classList.add('hidden');
-    }
-
-    function printThermalReceipt() {
-      window.print();
-    }
-
-    /* ── 10. TIMER SESI & QUEUE WORKFLOW ─────────────────────────── */
-    const activeIntervals = {};
-
-    function resumeActiveTimers() {
-      STATE.queue.forEach(item => {
-        if (item.status === 'Berjalan' && item.isTimerRunning && item.timeLeft > 0) {
-          startCountdown(item.id);
-        }
-      });
-    }
-
-    function renderQueueList() {
-      const listEl = document.getElementById('queue-list');
-      const emptyEl = document.getElementById('queue-empty');
-      const badgeEl = document.getElementById('queue-badge');
-      if (!listEl) return;
-
-      const activeCount = STATE.queue.filter(q => q.status === 'Berjalan').length;
-      badgeEl.textContent = `${activeCount} Sesi Berjalan`;
-
-      // Bersihkan list elemen (kecuali empty state)
-      listEl.querySelectorAll('.queue-item-card').forEach(el => el.remove());
-
-      if (STATE.queue.length === 0) {
-        emptyEl.classList.remove('hidden');
-        return;
-      }
-      emptyEl.classList.add('hidden');
-
-      STATE.queue.forEach(item => {
-        const card = document.createElement('div');
-        card.className = `queue-item-card glass-card p-4 border transition-all ${item.status === 'Selesai'
-          ? 'border-emerald-500/20 bg-emerald-950/10'
-          : item.isTimerRunning
-            ? 'border-pink-500/40 bg-pink-950/15'
-            : 'border-white/10'
-          }`;
-        card.id = `card-${item.id}`;
-
-        const isRunning = item.isTimerRunning;
-        const isDone = item.status === 'Selesai';
-        const timerText = isDone ? '00:00' : formatTimeSeconds(item.timeLeft);
-
-        card.innerHTML = `
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 flex-wrap mb-1">
-                <span class="font-black text-white text-sm font-mono">${item.id}</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDone ? 'badge-green' : isRunning ? 'badge-pink animate-pulse' : 'badge-yellow'
-          }">
-                  ${isDone ? '✅ Selesai' : isRunning ? '▶️ Sesi Berjalan' : '⏳ Siap / Jeda'}
-                </span>
-                <span class="text-white/40 text-[11px] font-mono">${item.metode}</span>
-                ${item.promo !== '-' ? `<span class="badge-cyan text-[10px] px-1.5 py-0.2 rounded font-bold">${item.promo}</span>` : ''}
-              </div>
-              <div class="flex items-center gap-2 text-xs text-white/60 flex-wrap">
-                <span>📸 ${item.sesi} Sesi</span>
-                <span>•</span>
-                <span>🖨️ ${item.kertasTerpotong} Lbr Kertas</span>
-                <span>•</span>
-                <span class="text-pink-400 font-bold">${formatRp(item.totalBayar)}</span>
-              </div>
-              ${item.note ? `<p class="text-white/40 text-xs mt-1 truncate">📝 ${item.note}</p>` : ''}
-              <p class="text-white/20 text-[10px] mt-0.5">${item.waktu}</p>
-            </div>
-
-            <!-- Timer Display & Action Buttons -->
-            <div class="flex flex-col items-end gap-2 shrink-0">
-              <div id="timer-display-${item.id}" class="font-mono text-2xl font-black tabular-nums tracking-wider ${isDone ? 'text-emerald-400' : isRunning ? 'text-pink-400 animate-pulse' : 'text-white/80'
-          }">
-                ${timerText}
-              </div>
-
-              <div class="flex items-center gap-1.5">
-                ${!isDone ? `
-                  ${!isRunning ? `
-                    <button onclick="startCountdown('${item.id}')"
-                      class="btn-neon px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">
-                      <span>▶️</span> Start Sesi
-                    </button>
-                  ` : `
-                    <button onclick="pauseCountdown('${item.id}')"
-                      class="glass-card px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-300 border border-amber-500/30 hover:bg-amber-500/10">
-                      ⏸️
-                    </button>
-                  `}
-                  <button onclick="finishSessionManual('${item.id}')"
-                    title="Selesaikan Sesi Manual"
-                    class="btn-green px-2.5 py-1.5 rounded-lg text-xs font-bold">
-                    ✓ Selesai
-                  </button>
-                ` : `
-                  <button onclick="openReceiptModalForId('${item.id}')"
-                    class="glass-card px-2.5 py-1.5 rounded-lg text-xs font-bold text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/10 flex items-center gap-1">
-                    <span>🖨️</span> Nota
-                  </button>
-                `}
-              </div>
-            </div>
-          </div>
-        `;
-
-        listEl.appendChild(card);
-      });
-    }
-
-    function openReceiptModalForId(id) {
-      const item = STATE.queue.find(q => q.id === id);
-      if (item) openReceiptModal(item);
-    }
-
-    function startCountdown(id) {
-      const item = STATE.queue.find(q => q.id === id);
-      if (!item || item.status === 'Selesai') return;
-
-      item.isTimerRunning = true;
-      saveQueuesToLocalStorage();
-      renderQueueList();
-
-      if (activeIntervals[id]) clearInterval(activeIntervals[id]);
-
-      activeIntervals[id] = setInterval(() => {
-        item.timeLeft--;
-        const timerEl = document.getElementById(`timer-display-${id}`);
-        if (timerEl) {
-          timerEl.textContent = formatTimeSeconds(item.timeLeft);
-        }
-
-        if (item.timeLeft <= 0) {
-          clearInterval(activeIntervals[id]);
-          delete activeIntervals[id];
-          handleSessionFinished(item);
-        }
-      }, 1000);
-
-      showToast(`Sesi ${id} dimulai! Hitung mundur aktif.`, 'info', 2000);
-    }
-
-    function pauseCountdown(id) {
-      const item = STATE.queue.find(q => q.id === id);
-      if (!item) return;
-
-      item.isTimerRunning = false;
-      if (activeIntervals[id]) {
-        clearInterval(activeIntervals[id]);
-        delete activeIntervals[id];
-      }
-      saveQueuesToLocalStorage();
-      renderQueueList();
-      showToast(`Timer ${id} dijeda.`, 'warning', 1500);
-    }
-
-    function finishSessionManual(id) {
-      const item = STATE.queue.find(q => q.id === id);
-      if (!item) return;
-      if (confirm(`Selesaikan sesi ${id} sekarang?`)) {
-        if (activeIntervals[id]) {
-          clearInterval(activeIntervals[id]);
-          delete activeIntervals[id];
-        }
-        item.timeLeft = 0;
-        handleSessionFinished(item);
-      }
-    }
-
-    /**
-     * TAHAP 3 SESI SELESAI:
-     * - Ketika waktu mencapai 00:00 atau diklik selesai manual
-     * - Frontend menembak update status ke Backend (action: 'updateStatus')
-     * - Backend mencari ID Transaksi dan mengubah Status menjadi 'Selesai'
-     */
-    async function handleSessionFinished(item) {
-      item.status = 'Selesai';
-      item.isTimerRunning = false;
-      saveQueuesToLocalStorage();
-      renderQueueList();
-
-      playFinishAlarm();
-      showToast(`🔔 SESI ${item.id} TELAH SELESAI! Waktu habis.`, 'success', 6000);
-
-      // Web Notification jika diizinkan
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('📸 Bymoment Booth', {
-          body: `Sesi ${item.id} telah selesai! Terima kasih.`,
-          icon: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-        });
-      }
-
-      // ✅ BENAR: Kirim dalam bentuk Object dengan kunci 'id' dan 'status'
-      syncUpdateStatus({
-        id: item.id,
-        status: 'Selesai'
-      });
-    }
-
-    async function syncUpdateStatus(payload) {
-      try {
-        const url = (typeof STATE !== 'undefined' && STATE.gasUrl) ? STATE.gasUrl : DEFAULT_GAS_URL;
-        const bodyData = Object.assign({ action: 'updateStatus' }, payload);
-
-        const result = await safeGasFetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(bodyData)
-        });
-
-        console.log("Respon Update Status:", result);
-        return result;
-
-      } catch (error) {
-        console.error("Gagal sinkron updateStatus ke GAS:", error);
-      }
-    }
-
-    function clearCompletedSessions() {
-      STATE.queue = STATE.queue.filter(q => q.status !== 'Selesai');
-      saveQueuesToLocalStorage();
-      renderQueueList();
-      showToast('Sesi yang telah selesai dibersihkan.', 'info');
-    }
-
-    function saveQueuesToLocalStorage() {
-      // Simpan maksimal 30 transaksi terakhir di lokal
-      localStorage.setItem('bymoment_active_queues', JSON.stringify(STATE.queue.slice(0, 30)));
-    }
-
-    /* ── 11. AUDIO ALARM ─────────────────────────────────────────── */
-    function playFinishAlarm() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const freqs = [784, 880, 988, 1046, 1318];
-        freqs.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          const t = ctx.currentTime + idx * 0.16;
-          osc.frequency.setValueAtTime(freq, t);
-          osc.type = 'triangle';
-          gain.gain.setValueAtTime(0.3, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-          osc.start(t);
-          osc.stop(t + 0.28);
-        });
-      } catch (e) {
-        console.warn('Audio context playback failed:', e);
-      }
-    }
-
-    /* ── 12. GAS CONFIG MODAL ────────────────────────────────────── */
-    function openGasModal() {
-      document.getElementById('gas-url-input').value = STATE.gasUrl;
-      document.getElementById('gas-test-feedback').textContent = '';
-      document.getElementById('gas-modal').classList.remove('hidden');
-    }
-
-    function closeGasModal() {
-      document.getElementById('gas-modal').classList.add('hidden');
-    }
-
-    function saveGasSettings() {
-      const url = document.getElementById('gas-url-input').value.trim();
-      STATE.gasUrl = url || DEFAULT_GAS_URL;
-      localStorage.setItem('bymoment_gas_url', STATE.gasUrl);
-      closeGasModal();
-      showToast('Konfigurasi URL Web App GAS disimpan!', 'success');
-      // Segera sinkronkan ulang stok & promo
-      fetchDashboardData(false);
-    }
-
-    async function testGasConnection() {
-      const url = document.getElementById('gas-url-input').value.trim() || STATE.gasUrl;
-      const feedback = document.getElementById('gas-test-feedback');
-      const btn = document.getElementById('gas-test-btn');
-
-      if (!url) {
-        feedback.innerHTML = '<span class="text-amber-400">⚠️ Harap masukkan URL Web App terlebih dahulu.</span>';
-        return;
-      }
-
-      btn.disabled = true;
-      feedback.innerHTML = '<span class="text-cyan-400">Sedang menguji koneksi...</span>';
-
-      try {
-        const sep = url.includes('?') ? '&' : '?';
-        const testUrl = `${url}${sep}action=status&_ts=${Date.now()}`;
-        const data = await safeGasFetch(testUrl, { redirect: 'follow' });
-
-        if (data && (data.success === true || data.status === 'ok')) {
-          feedback.innerHTML = `<span class="text-emerald-400">✅ Terhubung Sukses! Versi: ${data.version || '2.0'}</span>`;
-        } else {
-          feedback.innerHTML = `<span class="text-amber-400">⚠️ ${data && data.error ? data.error : 'Respon diterima namun status bukan ok.'}</span>`;
-        }
-      } catch (err) {
-        feedback.innerHTML = `<span class="text-red-400">❌ Gagal terhubung: ${err.message || 'Periksa URL GAS'}</span>`;
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    // Minta izin notifikasi browser
-    if ('Notification' in window && Notification.permission === 'default') {
-      setTimeout(() => Notification.requestPermission(), 4000);
-    }
-  </script>
+  <div id="print-area"></div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- ============================================================== -->
+  <script src="app.js"></script>
 </body>
 
 </html>

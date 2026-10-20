@@ -1,0 +1,326 @@
+* {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background: #080c14;
+  color: #f1f5f9;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #2563eb, #0284c7);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #3b82f6, #38bdf8);
+}
+
+/* Typography & Gradient Text */
+.grad-text {
+  background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 20px;
+}
+
+.glass-input {
+  background: rgba(3, 7, 18, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
+}
+
+/* Primary Executive Blue Action Button */
+.btn-neon {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35);
+}
+
+.btn-neon:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(37, 99, 235, 0.55);
+  filter: brightness(1.08);
+}
+
+.btn-neon:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Oceanic Action Button */
+.btn-cyan {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-cyan:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(2, 132, 199, 0.5);
+  filter: brightness(1.08);
+}
+
+/* Cash Button (Emerald) */
+.btn-green {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-green:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.5);
+  filter: brightness(1.08);
+}
+
+/* Qty Control Buttons */
+.qty-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #fff;
+  transition: all 0.15s ease;
+}
+
+.qty-btn:hover {
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: scale(1.05);
+}
+
+.qty-btn:active {
+  transform: scale(0.95);
+}
+
+/* Badges */
+.badge-blue {
+  background: rgba(37, 99, 235, 0.16);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+/* Alias for backward compatibility */
+.badge-pink {
+  background: rgba(37, 99, 235, 0.16);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.badge-cyan {
+  background: rgba(14, 165, 233, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-yellow {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* Ambient Background Orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modal Overlay */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.82);
+  backdrop-filter: blur(14px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Toasts */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast-box {
+  background: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Thermal Receipt Stylings */
+#thermal-receipt-container {
+  background: #fff;
+  color: #111;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px 16px;
+  width: 320px;
+  border-radius: 8px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.receipt-line {
+  border-bottom: 1px dashed #666;
+  margin: 8px 0;
+}
+
+.receipt-dline {
+  border-bottom: 2px dashed #222;
+  margin: 10px 0;
+}
+
+/* Isolasi #print-area di tampilan layar normal agar tidak mengganggu layout */
+@media screen {
+  #print-area {
+    display: none;
+  }
+}
+
+/* PRINT SPECIFIC STYLES (Thermal 58mm / 80mm & A4 Preview) */
+@media print {
+
+  /* 1. Hilangkan margin kertas bawaan browser */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  /* 2. Kunci tinggi & matikan overflow agar browser TIDAK MENAMBAH halaman 2 */
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+
+  /* 3. Sembunyikan elemen visual lain tanpa merusak parent/DOM */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* 4. TAMPILKAN KHUSUS #print-area dan isinya */
+  #print-area,
+  #print-area * {
+    visibility: visible !important;
+  }
+
+  /* 5. Tarik #print-area ke posisi fixed pojok kiri atas halaman cetak */
+  #print-area {
+    display: block !important;
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 78mm !important;
+    margin: 0 !important;
+    padding: 2mm !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    font-family: 'Courier New', Courier, monospace, sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+
+    /* Proteksi dari pemotongan halaman (single page guarantee) */
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
