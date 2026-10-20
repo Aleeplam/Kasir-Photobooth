@@ -7,7 +7,6 @@
   <title>Photobooth — Kasir POS &amp; Timer Sesi</title>
   <meta name="description" content="Sistem Kasir POS & Manajemen Photobooth terintegrasi Google Sheets." />
 
-  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
@@ -54,7 +53,6 @@
 
 <body class="selection:bg-blue-600 selection:text-white relative">
 
-  <!-- Ambient Glow Effects (Executive Navy/Oceanic) -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: 0;">
     <div class="orb w-[500px] h-[500px] -top-32 -left-32 bg-blue-600/10"></div>
     <div class="orb w-[450px] h-[450px] -bottom-32 -right-32 bg-sky-600/10"></div>
@@ -63,16 +61,11 @@
 
   <div class="toast-container" id="toast-container"></div>
 
-  <!-- ============================================================== -->
-  <!-- 1. LOGIN PAGE -->
-  <!-- ============================================================== -->
   <div id="login-page" class="relative z-10 min-h-screen flex items-center justify-center p-4">
     <div
       class="glass-card w-full max-w-md p-8 md:p-10 border border-slate-700/40 animate-bounce-in shadow-2xl relative overflow-hidden">
-      <!-- Glow accent inside card -->
       <div class="absolute -top-20 -right-20 w-44 h-44 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- Brand Logo / Avatar -->
       <div class="flex flex-col items-center text-center mb-8">
         <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg mb-4"
           style="background: linear-gradient(135deg, #2563eb, #0284c7);">
@@ -82,14 +75,12 @@
         <p class="text-slate-400 text-xs md:text-sm mt-1 font-medium">Sistem Kasir Photobox &amp; Sinkronisasi Sheets</p>
       </div>
 
-      <!-- Alert Error -->
       <div id="login-error"
         class="hidden mb-5 p-3.5 rounded-xl bg-red-500/15 border border-red-500/40 text-red-200 text-xs font-semibold flex items-center gap-2">
         <span>⚠️</span>
         <span id="login-error-msg">Username atau password salah!</span>
       </div>
 
-      <!-- Login Form -->
       <form id="login-form" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Username</label>
@@ -125,7 +116,6 @@
         </button>
       </form>
 
-      <!-- Demo Info & GAS Setting Link -->
       <div class="mt-6 pt-5 border-t border-slate-800 text-center space-y-2">
         <button onclick="openGasModal()"
           class="text-xs text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4">
@@ -135,11 +125,7 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- 2. DASHBOARD MAIN APP -->
-  <!-- ============================================================== -->
   <div id="dashboard-page" class="hidden relative z-10 min-h-screen flex flex-col">
-    <!-- Navbar / Header -->
     <header
       class="border-b border-slate-800 bg-[#0B1120]/90 backdrop-blur-md px-4 md:px-8 py-3.5 sticky top-0 z-30 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
@@ -156,9 +142,7 @@
         </div>
       </div>
 
-      <!-- Header Center Info: Realtime Stock & Stats -->
       <div class="flex items-center gap-2 md:gap-4 flex-wrap">
-        <!-- Stock Indicator -->
         <div id="stock-badge"
           class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/50 bg-slate-900/40">
           <span class="text-sm">🖨️</span>
@@ -169,13 +153,11 @@
           </div>
         </div>
 
-        <!-- Clock Display -->
         <div class="hidden sm:flex flex-col items-end px-3 py-1 text-right">
           <span id="live-time" class="text-white font-mono font-bold text-sm">--:--:--</span>
           <span id="live-date" class="text-slate-400 text-[11px] font-medium">---, --/--/----</span>
         </div>
 
-        <!-- Cashier Profile & Actions -->
         <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
           <div class="hidden md:block text-right">
             <div id="cashier-name" class="text-xs font-bold text-white">Kasir</div>
@@ -199,16 +181,10 @@
       </div>
     </header>
 
-    <!-- Main Content Grid -->
-    <main class="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-[1600px] w-full mx-auto"
+    <main class="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 max-w-[1600px] w-auto mx-auto"
       style="align-items: start;">
 
-      <!-- ============================================================== -->
-      <!-- SECTION KIRI: INPUT TRANSAKSI (Cols 1-7) -->
-      <!-- ============================================================== -->
       <section class="lg:col-span-7 space-y-4">
-
-        <!-- Header Section -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-xl">🛍️</span>
@@ -220,7 +196,6 @@
           </button>
         </div>
 
-        <!-- 1. Sesi Foto Card -->
         <div
           class="glass-card p-5 relative overflow-hidden border border-slate-800 hover:border-blue-500/40 transition-all">
           <div class="flex items-start justify-between mb-4">
@@ -252,7 +227,6 @@
           </div>
         </div>
 
-        <!-- 2. Extra Print Card -->
         <div
           class="glass-card p-5 relative overflow-hidden border border-slate-800 hover:border-sky-500/40 transition-all">
           <div class="flex items-start justify-between mb-4">
@@ -284,7 +258,6 @@
           </div>
         </div>
 
-        <!-- 3. Quick Presets -->
         <div>
           <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Menu Pintas Cepat</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -311,7 +284,6 @@
           </div>
         </div>
 
-        <!-- 4. Dropdown Promo Dinamis -->
         <div class="glass-card p-5 border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -332,7 +304,6 @@
             </div>
           </div>
 
-          <!-- Promo Highlight Description -->
           <div id="promo-description"
             class="hidden p-3 rounded-xl bg-blue-950/30 border border-blue-500/30 text-xs flex items-start gap-2.5">
             <span class="text-base">💡</span>
@@ -344,22 +315,15 @@
           </div>
         </div>
 
-        <!-- 5. Catatan / Nama Pelanggan -->
         <div>
           <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">📝 Catatan Kasir / Nama
             Pelanggan (Opsional)</label>
           <input id="order-note" type="text" placeholder="Contoh: Kak Dinda - Frame Biru Muda"
             class="glass-input w-full px-4 py-3 text-sm font-medium" />
         </div>
-
       </section>
 
-      <!-- ============================================================== -->
-      <!-- SECTION KANAN: RINGKASAN BAYAR & PANEL ANTREAN (Cols 8-12) -->
-      <!-- ============================================================== -->
       <section class="lg:col-span-5 space-y-5">
-
-        <!-- Cart & Calculation Summary -->
         <div class="glass-card p-5 border border-slate-800 relative">
           <div class="flex items-center gap-2 mb-4">
             <span class="text-xl">🧾</span>
@@ -367,32 +331,27 @@
           </div>
 
           <div class="space-y-2.5 text-sm border-b border-slate-800 pb-4 mb-4">
-            <!-- Line 1: Sesi -->
             <div class="flex items-center justify-between text-slate-300">
               <span id="calc-sesi-label">Sesi Foto (1x)</span>
               <span id="calc-sesi-price" class="font-bold text-white">Rp 25.000</span>
             </div>
 
-            <!-- Line 2: Extra Print -->
             <div class="flex items-center justify-between text-slate-300">
               <span id="calc-print-label">Extra Print (0x)</span>
               <span id="calc-print-price" class="font-bold text-white">Rp 0</span>
             </div>
 
-            <!-- Line 3: Potongan Harga Promo -->
             <div id="calc-discount-row" class="hidden flex items-center justify-between text-emerald-400 font-semibold">
               <span id="calc-discount-label">Diskon Promo</span>
               <span id="calc-discount-price">- Rp 0</span>
             </div>
 
-            <!-- Line 4: Bonus Sesi / Print Promo -->
             <div id="calc-bonus-row" class="hidden flex items-center justify-between text-cyan-300 font-semibold">
               <span id="calc-bonus-label">Bonus Promo</span>
               <span id="calc-bonus-value">+0</span>
             </div>
           </div>
 
-          <!-- Formula Info Badges: Total Kertas & Durasi Sesi -->
           <div class="grid grid-cols-2 gap-2 mb-4">
             <div class="bg-black/40 rounded-xl p-3 border border-slate-800/80">
               <div class="text-[11px] text-slate-400 uppercase font-bold tracking-wider">🖨️ Cetak Fisik</div>
@@ -406,14 +365,12 @@
             </div>
           </div>
 
-          <!-- Total Bayar Highlight -->
           <div class="rounded-2xl p-4 mb-5"
             style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(2, 132, 199, 0.16)); border: 1px solid rgba(59, 130, 246, 0.35);">
             <div class="text-xs font-bold text-slate-300 mb-1">TOTAL YANG HARUS DIBAYAR</div>
             <div id="calc-grand-total" class="text-3xl font-black grad-text tabular-nums">Rp 25.000</div>
           </div>
 
-          <!-- Payment Action Buttons -->
           <div class="grid grid-cols-2 gap-3">
             <button id="pay-cash-btn" onclick="submitPayment('Cash')"
               class="btn-green py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 font-black text-sm">
@@ -428,9 +385,6 @@
           </div>
         </div>
 
-        <!-- ============================================================== -->
-        <!-- PANEL ANTREAN & SIKLUS TIMER SESI (Dinamis) -->
-        <!-- ============================================================== -->
         <div class="glass-card p-5 border border-slate-800">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-2">
@@ -446,7 +400,6 @@
             </div>
           </div>
 
-          <!-- Queue List Container -->
           <div id="queue-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
             <div id="queue-empty" class="p-8 text-center border border-dashed border-slate-800 rounded-2xl">
               <div class="text-3xl mb-2 animate-float">📸</div>
@@ -455,12 +408,10 @@
             </div>
           </div>
         </div>
-
       </section>
 
     </main>
 
-    <!-- Footer Status Bar -->
     <footer
       class="border-t border-slate-800/80 bg-[#070b14]/90 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
       <div class="flex items-center gap-4">
@@ -479,9 +430,6 @@
     </footer>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- MODAL: STRUK THERMAL (58mm / 80mm) -->
-  <!-- ============================================================== -->
   <div id="receipt-modal" class="modal-backdrop hidden">
     <div class="glass-card max-w-md w-full p-6 text-center animate-bounce-in relative">
       <div class="flex items-center justify-between mb-4">
@@ -491,7 +439,6 @@
         <button onclick="closeReceiptModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
       </div>
 
-      <!-- Thermal Receipt Preview Container -->
       <div id="thermal-receipt-container">
         <div style="text-align: center;">
           <div style="font-size: 16px; font-weight: 900; letter-spacing: 1px;">PHOTOBOOTH</div>
@@ -563,7 +510,6 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
       <div class="grid grid-cols-2 gap-3 mt-5">
         <button onclick="printThermalReceipt()"
           class="btn-cyan py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
@@ -577,19 +523,14 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- MODAL: QRIS PAYMENT -->
-  <!-- ============================================================== -->
   <div id="qris-modal" class="modal-backdrop hidden">
     <div class="glass-card max-w-sm w-full p-6 text-center animate-bounce-in">
       <div class="text-3xl mb-2">📲</div>
       <h3 class="font-black text-lg grad-text">Scan QRIS Pembayaran</h3>
       <p class="text-slate-400 text-xs mb-4">Arahkan kamera aplikasi pembayaran pelanggan ke kode berikut</p>
 
-      <!-- Generated SVG QR Mockup with Professional Brand Center -->
       <div class="bg-white p-4 rounded-2xl mx-auto w-52 h-52 flex items-center justify-center shadow-inner">
         <svg viewBox="0 0 120 120" class="w-full h-full">
-          <!-- Corners -->
           <rect x="10" y="10" width="30" height="30" fill="none" stroke="#111" stroke-width="4" />
           <rect x="18" y="18" width="14" height="14" fill="#111" />
 
@@ -599,7 +540,6 @@
           <rect x="10" y="80" width="30" height="30" fill="none" stroke="#111" stroke-width="4" />
           <rect x="18" y="88" width="14" height="14" fill="#111" />
 
-          <!-- Random QR Patterns -->
           <rect x="50" y="15" width="8" height="8" fill="#111" />
           <rect x="65" y="15" width="8" height="8" fill="#111" />
           <rect x="50" y="30" width="8" height="8" fill="#111" />
@@ -616,7 +556,6 @@
           <rect x="50" y="80" width="8" height="8" fill="#111" />
           <rect x="65" y="95" width="8" height="8" fill="#111" />
 
-          <!-- Professional Brand Center Icon -->
           <rect x="46" y="46" width="28" height="28" rx="6" fill="#2563EB" />
           <text x="60" y="64" text-anchor="middle" fill="#fff" font-size="16" font-weight="900"
             font-family="sans-serif">P</text>
@@ -640,9 +579,6 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- MODAL: GOOGLE APPS SCRIPT URL SETTINGS -->
-  <!-- ============================================================== -->
   <div id="gas-modal" class="modal-backdrop hidden">
     <div class="glass-card max-w-lg w-full p-6 animate-bounce-in">
       <div class="flex items-center gap-2 mb-3">
@@ -683,14 +619,8 @@
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- THERMAL RECEIPT PRINT AREA (Direct child of body, strictly isolated) -->
-  <!-- ============================================================== -->
   <div id="print-area"></div>
 
-  <!-- ============================================================== -->
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
-  <!-- ============================================================== -->
   <script src="app.js"></script>
 </body>
 

@@ -1,49 +1,31 @@
-// Auto-detect URL GAS saat dijalankan dari Google Apps Script (HtmlService)
-// Jika dibuka dari GAS (script.google.com), gunakan URL halaman itu sendiri → same-origin
-// Jika dibuka dari localhost/file, gunakan URL fallback hardcoded
 const FALLBACK_GAS_URL = "https://script.google.com/macros/s/AKfycbw0kao-EtoKUzUlb3TFmCoNiV8h8FdsoSyaQ5adIP88CdaqwqpXeYMF7xuGE_CiLELnuw/exec";
 const IS_RUNNING_ON_GAS = window.location.href.includes('script.google.com') || window.location.href.includes('googleusercontent.com');
 const DEFAULT_GAS_URL = IS_RUNNING_ON_GAS
-  ? window.location.href.split('?')[0]  // URL halaman itu sendiri = GAS endpoint
+  ? window.location.href.split('?')[0]
   : FALLBACK_GAS_URL;
 
 let storedGasUrl = localStorage.getItem('bymoment_gas_url');
-// Hapus URL tersimpan jika sudah tidak sesuai (misalnya deployment lama)
 if (storedGasUrl && IS_RUNNING_ON_GAS) {
-  // Saat dijalankan dari GAS, selalu pakai URL otomatis (bukan localStorage)
   storedGasUrl = null;
 }
 
-/* ── 1. GLOBAL CONSTANTS & CONFIG ───────────────────────────── */
-const PRICE_SESI = 25000;      // 1 Sesi Foto = Rp 25.000
-const PRICE_EXTRA_PRINT = 10000; // Extra Print = Rp 10.000 / lembar
-const DURATION_PER_SESI_MINUTES = 5; // 1 Sesi = 5 menit (300 detik)
+const PRICE_SESI = 25000;
+const PRICE_EXTRA_PRINT = 10000;
+const DURATION_PER_SESI_MINUTES = 5;
 
-/* ── 2. APPLICATION STATE ────────────────────────────────────── */
 const STATE = {
   gasUrl: storedGasUrl || DEFAULT_GAS_URL,
   currentUser: JSON.parse(localStorage.getItem('bymoment_user') || 'null'),
   paperStock: Number(localStorage.getItem('bymoment_paper_stock')) || 0,
   promos: JSON.parse(localStorage.getItem('bymoment_promos') || '[]'),
-
-  // Form Input State
   sesi: 1,
   extraPrint: 0,
   selectedPromo: null,
-
-  // Active Queues & Sessions
   queue: JSON.parse(localStorage.getItem('bymoment_active_queues') || '[]'),
-
-  // Temporary Modal State
   pendingMethod: 'Cash',
   lastTransaction: null
 };
 
-/**
- * Helper Safe Fetch untuk Google Apps Script.
- * Saat app dijalankan dari GAS (HtmlService), semua request sudah same-origin
- * sehingga fetch() biasa bekerja sempurna tanpa masalah CORS.
- */
 async function safeGasFetch(url, options = {}) {
   try {
     const response = await fetch(url, { ...options, redirect: 'follow' });
@@ -82,7 +64,6 @@ async function safeGasFetch(url, options = {}) {
   }
 }
 
-/* ── 3. HELPER UTILS ─────────────────────────────────────────── */
 function formatRp(num) {
   return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
 }
@@ -126,7 +107,6 @@ function showToast(message, type = 'info', duration = 3000) {
   }, duration);
 }
 
-/* ── 4. INITIALIZATION & CLOCK ───────────────────────────────── */
 function initClock() {
   function update() {
     const now = new Date();
@@ -142,19 +122,15 @@ function initClock() {
 window.addEventListener('DOMContentLoaded', () => {
   initClock();
 
-  // Cek apakah ada session aktif
   if (STATE.currentUser) {
     showDashboardView();
-    // Sinkronisasi data promo & stok kertas terkini dari GAS
     fetchDashboardData(true);
   } else {
     showLoginView();
   }
 
-  // Resume timer untuk queue yang sedang berjalan
   resumeActiveTimers();
 
-  // Auto-sync stok kertas dan promo setiap 60 detik jika sedang aktif
   setInterval(() => {
     if (STATE.currentUser && !document.hidden) {
       fetchDashboardData(true);
@@ -162,7 +138,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }, 60000);
 });
 
-/* ── 5. AUTHENTICATION & LOGIN LOGIC ─────────────────────────── */
 const togglePwBtn = document.getElementById('toggle-pw');
 if (togglePwBtn) {
   togglePwBtn.addEventListener('click', () => {
@@ -199,18 +174,15 @@ if (loginForm) {
       });
 
       if (result && result.success === true) {
-        // 1. Simpan data user yang berhasil login
         STATE.currentUser = result.user || { username: usernameInput, nama: usernameInput };
         localStorage.setItem('bymoment_user', JSON.stringify(STATE.currentUser));
 
-        // 2. Tangkap data promos langsung dari response JSON login & simpan
         if (Array.isArray(result.promos)) {
           STATE.promos = result.promos;
           localStorage.setItem('bymoment_promos', JSON.stringify(result.promos));
           renderPromoDropdown();
         }
 
-        // 3. Tangkap data stok kertas fisik langsung dari response JSON login & simpan
         if (typeof result.stok === 'number') {
           STATE.paperStock = result.stok;
           localStorage.setItem('bymoment_paper_stock', result.stok);
@@ -247,10 +219,8 @@ function showDashboardView() {
   if (cName) cName.textContent = user.nama || user.username;
   if (cUser) cUser.textContent = '@' + user.username;
 
-  // Render stok kertas & dropdown promo yang tersimpan
   updatePaperStockDisplay(STATE.paperStock);
   renderPromoDropdown();
-
   calculateAndRenderOrder();
   renderQueueList();
 }
@@ -271,12 +241,6 @@ function handleLogout() {
   }
 }
 
-/* ── 6. PROMO & STOCK SYNC (fetchDashboardData) ─────────────── */
-/**
- * Mengambil stok kertas dan promo aktif dari endpoint mandiri:
- * - GET ?action=getStok   -> { success: true, stok: ... }
- * - GET ?action=getPromos  -> { success: true, promos: [...] }
- */
 async function fetchDashboardData(silent = false) {
   try {
     const gasUrl = (STATE.gasUrl || DEFAULT_GAS_URL).trim();
@@ -293,7 +257,6 @@ async function fetchDashboardData(silent = false) {
 
     let hasError = false;
 
-    // 1. Update Stok Kertas Fisik Murni dari GAS
     if (dataStok && dataStok.success === true && typeof dataStok.stok === 'number') {
       STATE.paperStock = dataStok.stok;
       localStorage.setItem('bymoment_paper_stock', dataStok.stok);
@@ -303,7 +266,6 @@ async function fetchDashboardData(silent = false) {
       console.warn('Gagal ambil stok:', dataStok.error);
     }
 
-    // 2. Update Daftar Promo Murni dari GAS
     if (dataPromo && dataPromo.success === true && Array.isArray(dataPromo.promos)) {
       STATE.promos = dataPromo.promos;
       localStorage.setItem('bymoment_promos', JSON.stringify(dataPromo.promos));
@@ -382,7 +344,6 @@ function renderPromoDropdown() {
   }
 }
 
-/* ── 7. ORDER CALCULATION LOGIC ──────────────────────────────── */
 function updateQty(type, delta) {
   if (type === 'sesi') {
     STATE.sesi = Math.max(1, Math.min(20, STATE.sesi + delta));
@@ -429,20 +390,6 @@ function resetTransactionForm() {
   showToast('Form pesanan telah di-reset', 'info');
 }
 
-/**
- * KALKULASI LOGIKA BISNIS:
- * - Tarif Dasar: 1 Sesi Foto = Rp 25.000 (1 foto sesi + 1 lembar kertas fisik)
- * - Extra Print: Rp 10.000 / lembar
- *
- * Tipe Promo:
- * 1. POTONG_HARGA: Mengurangi Total Bayar (Rp). Stok kertas normal = Sesi + Extra Print.
- * 2. GRATIS_SESI : Total Bayar TETAP. Sesi foto total & stok kertas bertambah sebesar Nilai promo.
- * 3. GRATIS_PRINT: Total Bayar TETAP. Stok kertas bertambah sebesar Nilai promo.
- *
- * Formulasi:
- * - Total Kertas Fisik Terpotong = (Sesi Bayar + Bonus Sesi/Print Promo) + Extra Print
- * - Total Bayar (Rp) = (Sesi Bayar * 25000) + (Extra Print * 10000) - Potongan Harga Promo
- */
 function calculateOrder() {
   const sesiBayar = STATE.sesi;
   const extraPrint = STATE.extraPrint;
@@ -465,15 +412,9 @@ function calculateOrder() {
     }
   }
 
-  // Grand Total Bayar (tidak boleh negatif)
   let grandTotal = Math.max(0, subtotalSesi + subtotalPrint - potonganHarga);
-
-  // Total Sesi Fisik (termasuk bonus sesi)
   let totalSesiNyata = sesiBayar + bonusSesi;
-
-  // Total Kertas Fisik
   let totalKertasFisik = (sesiBayar + bonusSesi + bonusPrint) + extraPrint;
-
   let totalDurasiMenit = totalSesiNyata * DURATION_PER_SESI_MINUTES;
 
   return {
@@ -495,7 +436,6 @@ function calculateOrder() {
 function calculateAndRenderOrder() {
   const c = calculateOrder();
 
-  // Labels & Amounts
   const sesiLabel = document.getElementById('calc-sesi-label');
   const sesiPrice = document.getElementById('calc-sesi-price');
   const printLabel = document.getElementById('calc-print-label');
@@ -507,7 +447,6 @@ function calculateAndRenderOrder() {
   if (printLabel) printLabel.textContent = `Extra Print (${c.extraPrint}x @ ${formatRp(PRICE_EXTRA_PRINT)})`;
   if (printPrice) printPrice.textContent = formatRp(c.subtotalPrint);
 
-  // Discount Row
   const discRow = document.getElementById('calc-discount-row');
   if (discRow) {
     if (c.potonganHarga > 0) {
@@ -521,7 +460,6 @@ function calculateAndRenderOrder() {
     }
   }
 
-  // Bonus Row
   const bonusRow = document.getElementById('calc-bonus-row');
   if (bonusRow) {
     if (c.bonusSesi > 0 || c.bonusPrint > 0) {
@@ -540,19 +478,16 @@ function calculateAndRenderOrder() {
     }
   }
 
-  // Kertas & Durasi
   const kertasEl = document.getElementById('calc-total-kertas');
   const durasiEl = document.getElementById('calc-total-duration');
   if (kertasEl) kertasEl.textContent = `${c.totalKertasFisik} Lembar`;
   if (durasiEl) durasiEl.textContent = `${c.totalDurasiMenit} Menit`;
 
-  // Grand Total
   const totalEl = document.getElementById('calc-grand-total');
   const qrisEl = document.getElementById('qris-amount-display');
   if (totalEl) totalEl.textContent = formatRp(c.grandTotal);
   if (qrisEl) qrisEl.textContent = formatRp(c.grandTotal);
 
-  // Promo Description Box
   const pDescBox = document.getElementById('promo-description');
   if (pDescBox) {
     if (c.promo) {
@@ -576,7 +511,6 @@ function calculateAndRenderOrder() {
   }
 }
 
-/* ── 8. PAYMENT & TRANSACTION PROCESSING ─────────────────────── */
 function submitPayment(method) {
   STATE.pendingMethod = method;
   if (method === 'QRIS') {
@@ -597,12 +531,6 @@ function closeQrisModal() {
   if (qModal) qModal.classList.add('hidden');
 }
 
-/**
- * TAHAP 1 PEMBAYARAN:
- * - Catat transaksi ke Tab "Transaksi" dengan Status = 'Berjalan'
- * - Backend langsung memotong stok di Tab "Stok" Sel B2
- * - Tampilkan Modal Struk & Masukkan sesi ke Panel Antrean
- */
 async function executePayment(method) {
   const calc = calculateOrder();
   const noteEl = document.getElementById('order-note');
@@ -612,7 +540,6 @@ async function executePayment(method) {
   const waktuStr = now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
   const cashier = STATE.currentUser ? (STATE.currentUser.nama || STATE.currentUser.username) : 'Kasir';
 
-  // Persiapan data item antrean
   const queueItem = {
     id: trxId,
     waktu: waktuStr,
@@ -620,7 +547,7 @@ async function executePayment(method) {
     extraPrint: calc.extraPrint,
     totalBayar: calc.grandTotal,
     metode: method,
-    status: 'Berjalan', // Status awal sesuai spesifikasi
+    status: 'Berjalan',
     promo: calc.promo ? calc.promo.kode : '-',
     kertasTerpotong: calc.totalKertasFisik,
     durasiDetik: calc.totalDurasiMenit * 60,
@@ -630,28 +557,20 @@ async function executePayment(method) {
     note: note
   };
 
-  // Tambahkan ke antrean lokal
   STATE.queue.unshift(queueItem);
   saveQueuesToLocalStorage();
   renderQueueList();
 
-  // Simpan untuk modal struk
   STATE.lastTransaction = queueItem;
 
-  // Update estimasi sisa stok lokal
   if (STATE.paperStock > 0) {
     updatePaperStockDisplay(Math.max(0, STATE.paperStock - calc.totalKertasFisik));
   }
 
   showToast(`Transaksi ${trxId} tercatat! Sesi Siap Dimulai.`, 'success', 3500);
 
-  // Tampilkan Modal Struk Thermal
   openReceiptModal(queueItem);
-
-  // Reset form order
   resetTransactionForm();
-
-  // Kirim request ke Google Apps Script (action: 'create')
   syncCreateTransaction(queueItem);
 }
 
@@ -663,12 +582,6 @@ async function syncCreateTransaction(trx) {
 
     const bodyData = Object.assign({ action: 'create' }, trx);
 
-    console.log("=== DATA TRANSAKSI DIKIRIM KE GAS ===");
-    console.log(JSON.stringify(bodyData, null, 2));
-    console.log("kertasTerpotong:", bodyData.kertasTerpotong);
-    console.log("sesi:", bodyData.sesi);
-    console.log("extraPrint:", bodyData.extraPrint);
-
     const result = await safeGasFetch(url, {
       method: 'POST',
       headers: {
@@ -677,17 +590,9 @@ async function syncCreateTransaction(trx) {
       body: JSON.stringify(bodyData)
     });
 
-    console.log("=== RESPON DARI GAS ===");
-    console.log(result);
-
     if (result && result.success === true && typeof result.sisaStok === 'number') {
       STATE.paperStock = result.sisaStok;
-
-      localStorage.setItem(
-        'bymoment_paper_stock',
-        result.sisaStok
-      );
-
+      localStorage.setItem('bymoment_paper_stock', result.sisaStok);
       updatePaperStockDisplay(result.sisaStok);
     }
 
@@ -698,7 +603,6 @@ async function syncCreateTransaction(trx) {
   }
 }
 
-/* ── 9. MODAL STRUK THERMAL ──────────────────────────────────── */
 function openReceiptModal(trx) {
   if (!trx) return;
   const rcptId = document.getElementById('rcpt-id');
@@ -749,7 +653,6 @@ function openReceiptModal(trx) {
   if (totalEl) totalEl.textContent = formatRp(trx.totalBayar);
   if (kertasEl) kertasEl.textContent = `${trx.kertasTerpotong} Lembar Fisik`;
 
-  // Salin konten struk ke container #print-area mandiri untuk isolasi print
   const printArea = document.getElementById('print-area');
   const rcptContainer = document.getElementById('thermal-receipt-container');
   if (printArea && rcptContainer) {
@@ -766,7 +669,6 @@ function closeReceiptModal() {
 }
 
 function printThermalReceipt() {
-  // Pastikan #print-area memiliki markup struk terkini sebelum dicetak
   const printArea = document.getElementById('print-area');
   const rcptContainer = document.getElementById('thermal-receipt-container');
   if (printArea && rcptContainer) {
@@ -775,7 +677,6 @@ function printThermalReceipt() {
   window.print();
 }
 
-/* ── 10. TIMER SESI & QUEUE WORKFLOW ─────────────────────────── */
 const activeIntervals = {};
 
 function resumeActiveTimers() {
@@ -795,7 +696,6 @@ function renderQueueList() {
   const activeCount = STATE.queue.filter(q => q.status === 'Berjalan').length;
   if (badgeEl) badgeEl.textContent = `${activeCount} Sesi Berjalan`;
 
-  // Bersihkan list elemen (kecuali empty state)
   listEl.querySelectorAll('.queue-item-card').forEach(el => el.remove());
 
   if (STATE.queue.length === 0) {
@@ -823,8 +723,7 @@ function renderQueueList() {
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 flex-wrap mb-1">
             <span class="font-black text-white text-sm font-mono">${item.id}</span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDone ? 'badge-green' : isRunning ? 'badge-blue animate-pulse' : 'badge-yellow'
-      }">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDone ? 'badge-green' : isRunning ? 'badge-blue animate-pulse' : 'badge-yellow'}">
               ${isDone ? '✅ Selesai' : isRunning ? '▶️ Sesi Berjalan' : '⏳ Siap / Jeda'}
             </span>
             <span class="text-white/40 text-[11px] font-mono">${item.metode}</span>
@@ -841,10 +740,8 @@ function renderQueueList() {
           <p class="text-white/20 text-[10px] mt-0.5">${item.waktu}</p>
         </div>
 
-        <!-- Timer Display & Action Buttons -->
         <div class="flex flex-col items-end gap-2 shrink-0">
-          <div id="timer-display-${item.id}" class="font-mono text-2xl font-black tabular-nums tracking-wider ${isDone ? 'text-emerald-400' : isRunning ? 'text-blue-400 animate-pulse' : 'text-white/80'
-      }">
+          <div id="timer-display-${item.id}" class="font-mono text-2xl font-black tabular-nums tracking-wider ${isDone ? 'text-emerald-400' : isRunning ? 'text-blue-400 animate-pulse' : 'text-white/80'}">
             ${timerText}
           </div>
 
@@ -940,12 +837,6 @@ function finishSessionManual(id) {
   }
 }
 
-/**
- * TAHAP 3 SESI SELESAI:
- * - Ketika waktu mencapai 00:00 atau diklik selesai manual
- * - Frontend menembak update status ke Backend (action: 'updateStatus')
- * - Backend mencari ID Transaksi dan mengubah Status menjadi 'Selesai'
- */
 async function handleSessionFinished(item) {
   item.status = 'Selesai';
   item.isTimerRunning = false;
@@ -955,7 +846,6 @@ async function handleSessionFinished(item) {
   playFinishAlarm();
   showToast(`🔔 SESI ${item.id} TELAH SELESAI! Waktu habis.`, 'success', 6000);
 
-  // Web Notification jika diizinkan
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification('📸 Photobooth', {
       body: `Sesi ${item.id} telah selesai! Terima kasih.`,
@@ -963,7 +853,6 @@ async function handleSessionFinished(item) {
     });
   }
 
-  // Kirim dalam bentuk Object dengan kunci 'id' dan 'status'
   syncUpdateStatus({
     id: item.id,
     status: 'Selesai'
@@ -983,7 +872,6 @@ async function syncUpdateStatus(payload) {
       body: JSON.stringify(bodyData)
     });
 
-    console.log("Respon Update Status:", result);
     return result;
 
   } catch (error) {
@@ -999,11 +887,9 @@ function clearCompletedSessions() {
 }
 
 function saveQueuesToLocalStorage() {
-  // Simpan maksimal 30 transaksi terakhir di lokal
   localStorage.setItem('bymoment_active_queues', JSON.stringify(STATE.queue.slice(0, 30)));
 }
 
-/* ── 11. AUDIO ALARM ─────────────────────────────────────────── */
 function playFinishAlarm() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1026,7 +912,6 @@ function playFinishAlarm() {
   }
 }
 
-/* ── 12. GAS CONFIG MODAL ────────────────────────────────────── */
 function openGasModal() {
   const urlInput = document.getElementById('gas-url-input');
   const feedback = document.getElementById('gas-test-feedback');
@@ -1048,7 +933,6 @@ function saveGasSettings() {
   localStorage.setItem('bymoment_gas_url', STATE.gasUrl);
   closeGasModal();
   showToast('Konfigurasi URL Web App GAS disimpan!', 'success');
-  // Segera sinkronkan ulang stok & promo
   fetchDashboardData(false);
 }
 
@@ -1085,7 +969,6 @@ async function testGasConnection() {
   }
 }
 
-// Minta izin notifikasi browser
 if ('Notification' in window && Notification.permission === 'default') {
   setTimeout(() => Notification.requestPermission(), 4000);
 }

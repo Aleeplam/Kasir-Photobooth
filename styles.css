@@ -10,7 +10,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -29,7 +28,6 @@ body {
   background: linear-gradient(135deg, #3b82f6, #38bdf8);
 }
 
-/* Typography & Gradient Text */
 .grad-text {
   background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #38bdf8 100%);
   -webkit-background-clip: text;
@@ -59,7 +57,6 @@ body {
   box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
 }
 
-/* Primary Executive Blue Action Button */
 .btn-neon {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
@@ -78,7 +75,6 @@ body {
   transform: translateY(0);
 }
 
-/* Secondary Oceanic Action Button */
 .btn-cyan {
   background: linear-gradient(135deg, #0284c7, #0369a1);
   color: #fff;
@@ -93,7 +89,6 @@ body {
   filter: brightness(1.08);
 }
 
-/* Cash Button (Emerald) */
 .btn-green {
   background: linear-gradient(135deg, #10b981, #059669);
   color: #fff;
@@ -108,7 +103,6 @@ body {
   filter: brightness(1.08);
 }
 
-/* Qty Control Buttons */
 .qty-btn {
   width: 44px;
   height: 44px;
@@ -134,14 +128,7 @@ body {
   transform: scale(0.95);
 }
 
-/* Badges */
-.badge-blue {
-  background: rgba(37, 99, 235, 0.16);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.35);
-}
-
-/* Alias for backward compatibility */
+.badge-blue,
 .badge-pink {
   background: rgba(37, 99, 235, 0.16);
   color: #60a5fa;
@@ -166,7 +153,6 @@ body {
   border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
-/* Ambient Background Orbs */
 .orb {
   position: absolute;
   border-radius: 50%;
@@ -175,7 +161,6 @@ body {
   z-index: 0;
 }
 
-/* Spinner */
 .spinner {
   width: 18px;
   height: 18px;
@@ -191,7 +176,6 @@ body {
   }
 }
 
-/* Modal Overlay */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -204,7 +188,6 @@ body {
   padding: 1rem;
 }
 
-/* Toasts */
 .toast-container {
   position: fixed;
   bottom: 24px;
@@ -240,7 +223,6 @@ body {
   }
 }
 
-/* Thermal Receipt Stylings */
 #thermal-receipt-container {
   background: #fff;
   color: #111;
@@ -264,23 +246,19 @@ body {
   margin: 10px 0;
 }
 
-/* Isolasi #print-area di tampilan layar normal agar tidak mengganggu layout */
 @media screen {
   #print-area {
     display: none;
   }
 }
 
-/* PRINT SPECIFIC STYLES (Thermal 58mm / 80mm & A4 Preview) */
+/* Print Setup */
 @media print {
-
-  /* 1. Hilangkan margin kertas bawaan browser */
   @page {
     margin: 0;
     size: auto;
   }
 
-  /* 2. Kunci tinggi & matikan overflow agar browser TIDAK MENAMBAH halaman 2 */
   html,
   body {
     margin: 0 !important;
@@ -290,18 +268,15 @@ body {
     background: #fff !important;
   }
 
-  /* 3. Sembunyikan elemen visual lain tanpa merusak parent/DOM */
   body * {
     visibility: hidden !important;
   }
 
-  /* 4. TAMPILKAN KHUSUS #print-area dan isinya */
   #print-area,
   #print-area * {
     visibility: visible !important;
   }
 
-  /* 5. Tarik #print-area ke posisi fixed pojok kiri atas halaman cetak */
   #print-area {
     display: block !important;
     position: fixed !important;
@@ -318,8 +293,6 @@ body {
     font-family: 'Courier New', Courier, monospace, sans-serif !important;
     font-size: 12px !important;
     line-height: 1.2 !important;
-
-    /* Proteksi dari pemotongan halaman (single page guarantee) */
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
